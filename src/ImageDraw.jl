@@ -3,7 +3,7 @@ module ImageDraw
 # package code goes here
 using Images, ColorTypes
 
-include("draw2d.jl")
+include("line2d.jl")
 
 export
 	#Lines

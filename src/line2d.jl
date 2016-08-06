@@ -41,6 +41,17 @@ function bresenham{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::
 	img
 end
 
-function xiaolin_wu()
+fpart{T<:Gray}(pixel::T) = pixel - T(trunc(pixel))
+rfpart{T<:Gray}(pixel::T) = one(T) - fpart(pixel)
+
+function swap(x, y)
+	temp = y
+	y = x
+	x = temp
+	x, y
+end
+
+function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T)
 	
+
 end
