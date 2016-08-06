@@ -41,8 +41,8 @@ function bresenham{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::
 	img
 end
 
-fpart{T<:Gray}(pixel::T) = pixel - T(trunc(pixel))
-rfpart{T<:Gray}(pixel::T) = one(T) - fpart(pixel)
+fpart{T}(pixel::T) = pixel - T(trunc(pixel))
+rfpart{T}(pixel::T) = one(T) - fpart(pixel)
 
 function swap(x, y)
 	temp = y
@@ -52,6 +52,49 @@ function swap(x, y)
 end
 
 function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T)
-	
+	dx = x1 - x0
+    dy = y1 - y0
+    
+	swapped=false
+    if abs(dx) < abs(dy)         
+    	x0, y0 = swap(x0, y0)
+        x1, y1 = swap(x1, y1)
+        dx, dy = swap(dx, dy)
+        swapped=true
+    end 
+    if x1 < x0
+        x0, x1 = swap(x0, x1)
+        y0, y1 = swap(y0, y1)
+    end 
+    gradient = dy / dx
 
+    xend = round(Int, x0)
+    yend = y0 + gradient * (xend - x0)
+    xgap = rfpart(x0 + 0.5)
+    xpxl0 = xend
+    ypxl0 = trunc(Int, yend)
+    index = swapped ? CartesianIndex(ypxl0, xpxl0) : CartesianIndex(xpxl0, ypxl0)
+    img[index] = T(rfpart(yend) * xgap)
+    index = swapped ? CartesianIndex(ypxl0 + 1, xpxl0) : CartesianIndex(xpxl0, ypxl0 + 1)
+    img[index] = T(fpart(yend) * xgap)
+    intery = yend + gradient
+
+    xend = round(Int, x1)
+    yend = y1 + gradient * (xend - x1)
+    xgap = fpart(x1 + 0.5)
+    xpxl1 = xend
+    ypxl1 = trunc(Int, yend)
+    index = swapped ? CartesianIndex(ypxl1, xpxl1) : CartesianIndex(xpxl1, ypxl1)
+    img[index] = T(rfpart(yend) * xgap)
+    index = swapped ? CartesianIndex(ypxl1 + 1, xpxl1) : CartesianIndex(xpxl1, ypxl1 + 1)
+    img[index] = T(fpart(yend) * xgap)
+    
+    for i in (xpxl0 + 1):(xpxl1 - 1)
+	    index = swapped ? CartesianIndex(trunc(Int, intery), i) : CartesianIndex(i, trunc(Int, intery))
+	    img[index] = T(rfpart(intery))
+	    index = swapped ? CartesianIndex(trunc(Int, intery) + 1, i) : CartesianIndex(i, trunc(Int, intery) + 1)
+	    img[index] = T(fpart(intery))
+        intery += gradient
+    end
+	img
 end
