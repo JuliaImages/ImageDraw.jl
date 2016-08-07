@@ -7,6 +7,7 @@ include("line2d.jl")
 
 export
 	#Lines
+	line!,
 	line,
 	bresenham,
 	xiaolin_wu

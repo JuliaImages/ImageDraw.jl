@@ -11,56 +11,59 @@ is required, the `xiaolin_wu` can be used.
 line{T<:Colorant}(img::AbstractArray{T, 2}, args...) = line!(copy(img), args...)
 
 function line!{T<:Colorant}(img::AbstractArray{T, 2}, p1::CartesianIndex{2}, p2::CartesianIndex{2}, method::Function = bresenham)
-	line!(img, p1[1], p1[2], p2[1], p2[2], one(T), method)
+    line!(img, p1[1], p1[2], p2[1], p2[2], one(T), method)
 end
 
-line!{T<:Colorant}(img::AbstractArray{T, 2}, p1::CartesianIndex{2}, p2::CartesianIndex{2}, color::T) = line!(img, p1[1], p1[2], p2[1], p2[2], color)
+function line!{T<:Colorant}(img::AbstractArray{T, 2}, p1::CartesianIndex{2}, p2::CartesianIndex{2}, color::T, method::Function = bresenham)
+    line!(img, p1[1], p1[2], p2[1], p2[2], color, method)
+end
+
 line!{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, method::Function = bresenham) = line!(img, y0, x0, y1, x1, one(T), method)
 line!{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T, method::Function = bresenham) = method(img, y0, x0, y1, x1, color)
 
 function bresenham{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T)
-	dx = abs(x1 - x0)
-	dy = abs(y1 - y0)
+    dx = abs(x1 - x0)
+    dy = abs(y1 - y0)
  
-	sx = x0 < x1 ? 1 : -1
-	sy = y0 < y1 ? 1 : -1;
+    sx = x0 < x1 ? 1 : -1
+    sy = y0 < y1 ? 1 : -1;
  
-	err = (dx > dy ? dx : -dy) / 2
- 	
-	while true
-		img[y0, x0] = color
-		(x0 != x1 || y0 != y1) || break
-		e2 = err
-		if e2 > -dx
-			err -= dy
-			x0 += sx
-		end
-		if e2 < dy
-			err += dx
-			y0 += sy
-		end
-	end
+    err = (dx > dy ? dx : -dy) / 2
+    
+    while true
+        img[y0, x0] = color
+        (x0 != x1 || y0 != y1) || break
+        e2 = err
+        if e2 > -dx
+            err -= dy
+            x0 += sx
+        end
+        if e2 < dy
+            err += dx
+            y0 += sy
+        end
+    end
 
-	img
+    img
 end
 
 fpart{T}(pixel::T) = pixel - T(trunc(pixel))
 rfpart{T}(pixel::T) = one(T) - fpart(pixel)
 
 function swap(x, y)
-	temp = y
-	y = x
-	x = temp
-	x, y
+    temp = y
+    y = x
+    x = temp
+    x, y
 end
 
 function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T)
-	dx = x1 - x0
+    dx = x1 - x0
     dy = y1 - y0
 
-	swapped=false
+    swapped=false
     if abs(dx) < abs(dy)         
-    	x0, y0 = swap(x0, y0)
+        x0, y0 = swap(x0, y0)
         x1, y1 = swap(x1, y1)
         dx, dy = swap(dx, dy)
         swapped=true
@@ -76,9 +79,9 @@ function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int
     xgap = rfpart(x0 + 0.5)
     xpxl0 = xend
     ypxl0 = trunc(Int, yend)
-    index = swapped ? CartesianIndex(ypxl0, xpxl0) : CartesianIndex(xpxl0, ypxl0)
+    index = swapped ? CartesianIndex(xpxl0, ypxl0) : CartesianIndex(ypxl0, xpxl0)
     if checkbounds(Bool, img, index) img[index] = T(rfpart(yend) * xgap) end
-    index = swapped ? CartesianIndex(ypxl0 + 1, xpxl0) : CartesianIndex(xpxl0, ypxl0 + 1)
+    index = swapped ? CartesianIndex(xpxl0, ypxl0 + 1) : CartesianIndex(ypxl0 + 1, xpxl0)
     if checkbounds(Bool, img, index) img[index] = T(fpart(yend) * xgap) end
     intery = yend + gradient
 
@@ -87,17 +90,17 @@ function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int
     xgap = fpart(x1 + 0.5)
     xpxl1 = xend
     ypxl1 = trunc(Int, yend)
-    index = swapped ? CartesianIndex(ypxl1, xpxl1) : CartesianIndex(xpxl1, ypxl1)
+    index = swapped ? CartesianIndex(xpxl1, ypxl1) : CartesianIndex(ypxl1, xpxl1)
     if checkbounds(Bool, img, index) img[index] = T(rfpart(yend) * xgap) end
-    index = swapped ? CartesianIndex(ypxl1 + 1, xpxl1) : CartesianIndex(xpxl1, ypxl1 + 1)
+    index = swapped ? CartesianIndex(xpxl1, ypxl1 + 1) : CartesianIndex(ypxl1 + 1, xpxl1)
     if checkbounds(Bool, img, index) img[index] = T(fpart(yend) * xgap) end
     
     for i in (xpxl0 + 1):(xpxl1 - 1)
-	    index = swapped ? CartesianIndex(trunc(Int, intery), i) : CartesianIndex(i, trunc(Int, intery))
-	    if checkbounds(Bool, img, index) img[index] = T(rfpart(intery)) end
-	    index = swapped ? CartesianIndex(trunc(Int, intery) + 1, i) : CartesianIndex(i, trunc(Int, intery) + 1)
-	    if checkbounds(Bool, img, index) img[index] = T(fpart(intery)) end
+        index = swapped ? CartesianIndex(i, trunc(Int, intery)) : CartesianIndex(trunc(Int, intery), i)
+        if checkbounds(Bool, img, index) img[index] = T(rfpart(intery)) end
+        index = swapped ? CartesianIndex(i, trunc(Int, intery) + 1) : CartesianIndex(trunc(Int, intery) + 1, i)
+        if checkbounds(Bool, img, index) img[index] = T(fpart(intery)) end
         intery += gradient
     end
-	img
+    img
 end
