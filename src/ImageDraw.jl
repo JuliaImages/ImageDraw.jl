@@ -4,6 +4,7 @@ module ImageDraw
 using Images, ColorTypes
 
 include("line2d.jl")
+include("circle2d.jl")
 
 export
 	#Lines
