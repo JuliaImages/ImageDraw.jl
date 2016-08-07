@@ -28,7 +28,7 @@ function bresenham{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::
 	err = (dx > dy ? dx : -dy) / 2
  	
 	while true
-		@inbounds img[y0, x0] = color
+		img[y0, x0] = color
 		(x0 != x1 || y0 != y1) || break
 		e2 = err
 		if e2 > -dx
@@ -57,7 +57,7 @@ end
 function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T)
 	dx = x1 - x0
     dy = y1 - y0
-    
+
 	swapped=false
     if abs(dx) < abs(dy)         
     	x0, y0 = swap(x0, y0)
@@ -77,9 +77,9 @@ function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int
     xpxl0 = xend
     ypxl0 = trunc(Int, yend)
     index = swapped ? CartesianIndex(ypxl0, xpxl0) : CartesianIndex(xpxl0, ypxl0)
-    img[index] = T(rfpart(yend) * xgap)
+    if checkbounds(Bool, img, index) img[index] = T(rfpart(yend) * xgap) end
     index = swapped ? CartesianIndex(ypxl0 + 1, xpxl0) : CartesianIndex(xpxl0, ypxl0 + 1)
-    img[index] = T(fpart(yend) * xgap)
+    if checkbounds(Bool, img, index) img[index] = T(fpart(yend) * xgap) end
     intery = yend + gradient
 
     xend = round(Int, x1)
@@ -88,15 +88,15 @@ function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int
     xpxl1 = xend
     ypxl1 = trunc(Int, yend)
     index = swapped ? CartesianIndex(ypxl1, xpxl1) : CartesianIndex(xpxl1, ypxl1)
-    img[index] = T(rfpart(yend) * xgap)
+    if checkbounds(Bool, img, index) img[index] = T(rfpart(yend) * xgap) end
     index = swapped ? CartesianIndex(ypxl1 + 1, xpxl1) : CartesianIndex(xpxl1, ypxl1 + 1)
-    img[index] = T(fpart(yend) * xgap)
+    if checkbounds(Bool, img, index) img[index] = T(fpart(yend) * xgap) end
     
     for i in (xpxl0 + 1):(xpxl1 - 1)
 	    index = swapped ? CartesianIndex(trunc(Int, intery), i) : CartesianIndex(i, trunc(Int, intery))
-	    img[index] = T(rfpart(intery))
+	    if checkbounds(Bool, img, index) img[index] = T(rfpart(intery)) end
 	    index = swapped ? CartesianIndex(trunc(Int, intery) + 1, i) : CartesianIndex(i, trunc(Int, intery) + 1)
-	    img[index] = T(fpart(intery))
+	    if checkbounds(Bool, img, index) img[index] = T(fpart(intery)) end
         intery += gradient
     end
 	img
