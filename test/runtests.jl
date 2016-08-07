@@ -4,6 +4,8 @@ module ImageDrawTest
 using FactCheck, ImageDraw, Base.Test, Images
 
 include("line2d.jl")
+include("ellipse2d.jl")
+include("circle2d.jl")
 
 isinteractive() || FactCheck.exitstatus()
 
