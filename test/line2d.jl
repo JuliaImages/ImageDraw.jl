@@ -8,9 +8,6 @@ facts("Lines2D") do
 		expected[diagind(expected)] = one(Gray)
 		res = bresenham(img, 1, 1, 10, 10, one(Gray))
 		@fact expected == res --> true
-		expected = copy(img)
-		expected[diagind(expected)[1:5]] = one(Gray)
-		res = bresenham(img, 1, 1, 5, 5, one(Gray))
 		@fact expected == res --> true
 		res = line(img, 1, 1, 10, 10)
 		@fact expected == res --> true
@@ -20,6 +17,12 @@ facts("Lines2D") do
 		@fact expected == res --> true
 		res = line(img, 1, 1, 10, 10, one(Gray))
 		@fact expected == res --> true
+		expected[diagind(expected)] = Gray(0.5)
+		res = line(img, 1, 1, 10, 10, Gray(0.5))
+		@fact expected == res --> true
+		expected = copy(img)
+		expected[diagind(expected)[1:5]] = one(Gray)
+		res = bresenham(img, 1, 1, 5, 5, one(Gray))
 
 		expected = copy(img)
 		expected[10, :] = one(Gray)
@@ -54,6 +57,12 @@ facts("Lines2D") do
 		expected = copy(img)
 		expected[10:9:55] = one(Gray)
 		res = bresenham(img, 10, 1, 5, 6, one(Gray))
+		@fact expected == res --> true
+
+		img = zeros(RGB, 10, 10)
+		expected = copy(img)
+		expected[diagind(expected)] = RGB(0.2, 0.3, 0.4)
+		res = bresenham(img, 1, 1, 10, 10, RGB(0.2, 0.3, 0.4))
 		@fact expected == res --> true
 	end
 
