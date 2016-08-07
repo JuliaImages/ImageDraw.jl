@@ -21,23 +21,26 @@ line!{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int,
 function bresenham{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T)
 	dx = abs(x1 - x0)
 	dy = abs(y1 - y0)
+ 
 	sx = x0 < x1 ? 1 : -1
-	sy = y0 < y1 ? 1 : -1
-	x = x0 - 1
-	y = y0 - 1
-	offset = dx - dy
+	sy = y0 < y1 ? 1 : -1;
+ 
+	err = (dx > dy ? dx : -dy) / 2
+ 	
 	while true
-		img[y + 1, x + 1] = color
-		(x != x1 - 1 || y != y1 - 1) || break
-		if offset * 2 > -dy
-			offset -= dy;
-			x += sx;
+		@inbounds img[y0, x0] = color
+		(x0 != x1 || y0 != y1) || break
+		e2 = err
+		if e2 > -dx
+			err -= dy
+			x0 += sx
 		end
-		if offset * 2 < dx
-			offset += dx;
-			y += sy;
+		if e2 < dy
+			err += dx
+			y0 += sy
 		end
 	end
+
 	img
 end
 
