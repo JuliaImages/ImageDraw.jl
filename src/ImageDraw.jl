@@ -4,6 +4,7 @@ module ImageDraw
 using Images, ColorTypes
 
 include("line2d.jl")
+include("ellipse2d.jl")
 include("circle2d.jl")
 
 export
@@ -11,6 +12,15 @@ export
 	line!,
 	line,
 	bresenham,
-	xiaolin_wu
+	xiaolin_wu,
+
+	#Ellipse
+	ellipse!,
+	ellipse,
+
+	#Circle
+	circle!,
+	circle
+
 
 end # module
