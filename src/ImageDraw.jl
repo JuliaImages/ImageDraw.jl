@@ -6,6 +6,7 @@ using Images, ColorTypes
 include("line2d.jl")
 include("ellipse2d.jl")
 include("circle2d.jl")
+include("polygon2d.jl")
 
 export
 	#Lines
@@ -20,7 +21,10 @@ export
 
 	#Circle
 	circle!,
-	circle
+	circle,
 
+	#Polygon
+	draw_polygon_perimeter!,
+	draw_polygon_perimeter
 
 end # module
