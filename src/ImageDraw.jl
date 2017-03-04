@@ -6,6 +6,7 @@ using Images, ColorTypes
 include("line2d.jl")
 include("ellipse2d.jl")
 include("circle2d.jl")
+include("paths.jl")
 
 export
 	#Lines
@@ -20,7 +21,10 @@ export
 
 	#Circle
 	circle!,
-	circle
+	circle,
 
+	#Paths
+	path!,
+	path
 
 end # module
