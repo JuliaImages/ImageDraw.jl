@@ -12,6 +12,7 @@ using Base.Test
     @test all(x->x==true, img[1,:])==true
     @test all(x->x==true, img[1:3,1])==true
     @test all(x->x==true, img[3,1:3])==true
+    @test all(x->x==false, img[2,2:3])==true
     @test img[2,4]==true
 
     img=zeros(ColorTypes.Gray{Bool},5,5)
@@ -19,5 +20,6 @@ using Base.Test
     @test all(x->x==true, img[1,:])==true
     @test all(x->x==true, img[1:3,1])==true
     @test all(x->x==true, img[3,1:3])==true
+    @test all(x->x==false, img[2,2:3])==true
     @test img[2,4]==true
 end
