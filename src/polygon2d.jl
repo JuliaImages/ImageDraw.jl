@@ -1,16 +1,18 @@
 """
 ```
 draw_polygon_perimeter!(img, vertices)
+draw_polygon_perimeter!(img, vertices, color)
 img2=draw_polygon_perimeter(img, vertices)
+img2=draw_polygon_perimeter(img, vertices, color)
 ```
 Draws the perimeter of the polygon formed by input vertices(Array of CartesianIndex).
 """
 
-
-
 draw_polygon_perimeter{T<:Colorant}(img::AbstractArray{T, 2}, args...) = draw_polygon_perimeter!(copy(img), args...)
 
-function draw_polygon_perimeter!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1})
+draw_polygon_perimeter!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1})=draw_polygon_perimeter!(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, one(T))
+
+function draw_polygon_perimeter!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, color::T)
 
     f = CartesianIndex(map(r->first(r)-1, indices(img)))
     l = CartesianIndex(map(r->last(r), indices(img)))
@@ -22,7 +24,7 @@ function draw_polygon_perimeter!{T<:Colorant}(img::AbstractArray{T, 2}, vertices
     end
 
     for i in 1:length(vertices)-1
-        line!(img, vertices[i], vertices[i+1])
+        line!(img, vertices[i], vertices[i+1], color)
     end
-    line!(img, vertices[1], vertices[end])
+    line!(img, vertices[1], vertices[end], color)
 end
