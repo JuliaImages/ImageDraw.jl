@@ -8,11 +8,11 @@ img2=draw_polygon_perimeter(img, vertices, color)
 Draws the perimeter of the polygon formed by input vertices(Array of CartesianIndex).
 """
 
-draw_polygon_perimeter{T<:Colorant}(img::AbstractArray{T, 2}, args...) = draw_polygon_perimeter!(copy(img), args...)
+polygon_perimeter{T<:Colorant}(img::AbstractArray{T, 2}, args...) = polygon_perimeter!(copy(img), args...)
 
-draw_polygon_perimeter!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1})=draw_polygon_perimeter!(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, one(T))
+polygon_perimeter!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1})=polygon_perimeter!(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, one(T))
 
-function draw_polygon_perimeter!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, color::T)
+function polygon_perimeter!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, color::T)
 
     f = CartesianIndex(map(r->first(r)-1, indices(img)))
     l = CartesianIndex(map(r->last(r), indices(img)))
