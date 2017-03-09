@@ -22,8 +22,8 @@ end
 function ellipse!{T<:Colorant}(img::AbstractArray{T, 2}, y::Int, x::Int, color::T, radiusy::Real, radiusx::Real)
 	ys = Int[]
 	xs = Int[]
-	for i in y : y + radiusy 
-		for j in x : x + radiusx 
+	for i in y : y + radiusy
+		for j in x : x + radiusx
 			val = ((i - y) / radiusy) ^ 2 + ((j - x) / radiusx) ^ 2
 			if val < 1
 				push!(ys, i)

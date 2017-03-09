@@ -1,6 +1,3 @@
-using Images
-using Base.Test
-
 @testset "Paths" begin
     vert=CartesianIndex{2}[]
     push!(vert, CartesianIndex(1,1))

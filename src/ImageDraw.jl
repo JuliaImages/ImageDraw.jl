@@ -1,7 +1,7 @@
 module ImageDraw
 
 # package code goes here
-using Images, ColorTypes
+using ImageCore, ColorTypes
 
 include("line2d.jl")
 include("ellipse2d.jl")
