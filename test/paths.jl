@@ -1,7 +1,7 @@
 using Images
 using Base.Test
 
-@testset "Polygon2d" begin
+@testset "Paths" begin
     vert=CartesianIndex{2}[]
     push!(vert, CartesianIndex(1,1))
     push!(vert, CartesianIndex(1,3))
@@ -9,7 +9,7 @@ using Base.Test
     push!(vert, CartesianIndex(3,3))
     push!(vert, CartesianIndex(3,1))
 
-    img = lines(zeros(ColorTypes.Gray{Bool},5,5), vert, closed=true)
+    img = path(zeros(ColorTypes.Gray{Bool},5,5), vert, closed=true)
     @test all(x->x==true, img[1,:])==true
     @test all(x->x==true, img[1:3,1])==true
     @test all(x->x==true, img[3,1:3])==true
@@ -17,7 +17,7 @@ using Base.Test
     @test img[2,4]==true
 
     img=zeros(ColorTypes.Gray{Bool},5,5)
-    lines!(img, vert)
+    path!(img, vert)
     @test all(x->x==true, img[1,:])==true
     @test all(x->x==true, img[1:3,1])==true
     @test all(x->x==true, img[3,1:3])==true
@@ -25,7 +25,7 @@ using Base.Test
     @test img[2,4]==true
 
     img=zeros(ColorTypes.RGB{N0f8},5,5)
-    lines!(img, vert, RGB{N0f8}(1,0,0), closed=true)
+    path!(img, vert, RGB{N0f8}(1,0,0), closed=true)
     @test all(x->x==RGB{N0f8}(1,0,0), img[1,:])==true
     @test all(x->x==RGB{N0f8}(1,0,0), img[1:3,1])==true
     @test all(x->x==RGB{N0f8}(1,0,0), img[3,1:3])==true
@@ -33,7 +33,7 @@ using Base.Test
     @test img[2,4]==RGB{N0f8}(1,0,0)
 
     img=zeros(ColorTypes.RGB{N0f8},5,5)
-    lines!(img, vert,closed=false)
+    path!(img, vert,closed=false)
     @test all(x->x==RGB{N0f8}(1,1,1), img[1,:])==true
     @test all(x->x==RGB{N0f8}(1,1,1), img[3,1:3])==true
     @test all(x->x==RGB{N0f8}(0,0,0), img[2,1:3])==true

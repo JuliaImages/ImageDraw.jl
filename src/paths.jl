@@ -10,9 +10,9 @@ closed (keyword): whether to connect first and last points
 In case a point is out-of-bounds, it throws an error after drawing the line segments till that point.
 """
 
-lines{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, color::T=one(T); closed::Bool=true) = lines!(copy(img),vertices,color,closed=closed)
+path{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, color::T=one(T); closed::Bool=true) = path!(copy(img),vertices,color,closed=closed)
 
-function lines!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, color::T=one(T); closed::Bool=true)
+function path!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, color::T=one(T); closed::Bool=true)
     f = CartesianIndex(map(r->first(r)-1, indices(img)))
     l = CartesianIndex(map(r->last(r), indices(img)))
 
