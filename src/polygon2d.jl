@@ -1,30 +1,36 @@
 """
-```
-draw_polygon_perimeter!(img, vertices)
-draw_polygon_perimeter!(img, vertices, color)
-img2=draw_polygon_perimeter(img, vertices)
-img2=draw_polygon_perimeter(img, vertices, color)
-```
-Draws the perimeter of the polygon formed by input vertices(Array of CartesianIndex).
+
+Draws lines segments connecting input points.
+Parameters:
+img: 2d array
+vertices: coordinates of points as array of CartesianIndex
+color (optional): color of line segments
+closed (keyword): whether to connect first and last points
+
+In case a point is out-of-bounds, it throws an error after drawing the line segments till that point.
 """
 
-polygon_perimeter{T<:Colorant}(img::AbstractArray{T, 2}, args...) = polygon_perimeter!(copy(img), args...)
+lines{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, color::T=one(T); closed::Bool=true) = lines!(copy(img),vertices,color,closed=closed)
 
-polygon_perimeter!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1})=polygon_perimeter!(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, one(T))
-
-function polygon_perimeter!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, color::T)
-
+function lines!{T<:Colorant}(img::AbstractArray{T, 2}, vertices::Array{CartesianIndex{2},1}, color::T=one(T); closed::Bool=true)
     f = CartesianIndex(map(r->first(r)-1, indices(img)))
     l = CartesianIndex(map(r->last(r), indices(img)))
-    for vertex in vertices
-        if min(f, vertex)!=f || max(l, vertex)!=l
-            println(vertex)
-            error("Polygon coordinates out of range.")
-        end
+
+    if min(f,vertices[1])!=f || max(l,vertices[1])!=l
+        println(vertices[1])
+        error("Point coordinates out of range.")
     end
 
     for i in 1:length(vertices)-1
-        line!(img, vertices[i], vertices[i+1], color)
+        if min(f,vertices[i+1])==f && max(l,vertices[i+1])==l
+            line!(img, vertices[i], vertices[i+1], color)
+        else
+            println(vertices[i+1])
+            error("Point coordinates out of range.")
+        end
     end
-    line!(img, vertices[1], vertices[end], color)
+
+    if closed==true
+        line!(img, vertices[1], vertices[end], color)
+    end
 end

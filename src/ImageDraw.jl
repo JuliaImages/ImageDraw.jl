@@ -24,7 +24,7 @@ export
 	circle,
 
 	#Polygon
-	polygon_perimeter!,
-	polygon_perimeter
+	lines!,
+	lines
 
 end # module
