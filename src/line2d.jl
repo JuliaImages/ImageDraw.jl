@@ -4,7 +4,7 @@ img_with_line = line(img, p1, p2, color, method)
 img_with_line = line(img, y0, x0, y1, x1, color, method)
 ```
 
-Draws a line on the input image given the points p1, p2 as CartesianIndex{2} with the 
+Draws a line on the input image given the points p1, p2 as CartesianIndex{2} with the
 given `color`. Lines are drawn using the `bresenham` method by default. If anti-aliasing
 is required, the `xiaolin_wu` can be used.
 """
@@ -24,12 +24,12 @@ line!{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int,
 function bresenham{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T)
     dx = abs(x1 - x0)
     dy = abs(y1 - y0)
- 
+
     sx = x0 < x1 ? 1 : -1
     sy = y0 < y1 ? 1 : -1;
- 
+
     err = (dx > dy ? dx : -dy) / 2
-    
+
     while true
         img[y0, x0] = color
         (x0 != x1 || y0 != y1) || break
@@ -62,16 +62,16 @@ function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int
     dy = y1 - y0
 
     swapped=false
-    if abs(dx) < abs(dy)         
+    if abs(dx) < abs(dy)
         x0, y0 = swap(x0, y0)
         x1, y1 = swap(x1, y1)
         dx, dy = swap(dx, dy)
         swapped=true
-    end 
+    end
     if x1 < x0
         x0, x1 = swap(x0, x1)
         y0, y1 = swap(y0, y1)
-    end 
+    end
     gradient = dy / dx
 
     xend = round(Int, x0)
@@ -94,7 +94,7 @@ function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int
     if checkbounds(Bool, img, index) img[index] = T(rfpart(yend) * xgap) end
     index = swapped ? CartesianIndex(xpxl1, ypxl1 + 1) : CartesianIndex(ypxl1 + 1, xpxl1)
     if checkbounds(Bool, img, index) img[index] = T(fpart(yend) * xgap) end
-    
+
     for i in (xpxl0 + 1):(xpxl1 - 1)
         index = swapped ? CartesianIndex(i, trunc(Int, intery)) : CartesianIndex(trunc(Int, intery), i)
         if checkbounds(Bool, img, index) img[index] = T(rfpart(intery)) end

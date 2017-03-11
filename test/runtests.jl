@@ -1,13 +1,18 @@
 module ImageDrawTest
 
-# write your own tests here
-using FactCheck, ImageDraw, Base.Test, Images
+using Base.Test, ImageDraw, ImageCore, ColorTypes, ColorVectorSpace, FixedPointNumbers
 
-include("line2d.jl")
-include("ellipse2d.jl")
-include("circle2d.jl")
-include("paths.jl")
+tests = [
+    "line2d.jl",
+    "ellipse2d.jl",
+    "circle2d.jl",
+    "paths.jl",
+]
 
-isinteractive() || FactCheck.exitstatus()
+for t in tests
+    @testset "$t" begin
+        include(t)
+    end
+end
 
 end
