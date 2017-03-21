@@ -104,3 +104,50 @@ function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int
     end
     img
 end
+
+"""
+```
+img_with_line = line_normal(img, τ, color, method)
+img_with_line = line_normal(img, ρ, θ, color, method)
+```
+
+Draws a line on the input image given tuple `τ` of the form (ρ,θ) for the normal form of line:
+    x*cos(θ) + y*sin(θ) = ρ
+with the given `color`. Lines are drawn using the `bresenham` method by default. If anti-aliasing
+is required, the `xiaolin_wu` can be used.
+"""
+line_normal{T<:Colorant}(img::AbstractArray{T, 2}, args...) = line_normal!(copy(img), args...)
+
+line_normal!{T<:Colorant}(img::AbstractArray{T, 2}, τ::Tuple{Number,Number}, method::Function = bresenham) = 
+    line_normal!(img, τ[1], τ[2], one(T), method)
+
+line_normal!{T<:Colorant}(img::AbstractArray{T, 2}, τ::Tuple{Number,Number}, color::T, method::Function = bresenham) = 
+    line_normal!(img, τ[1], τ[2], color, method)
+
+line_normal!{T<:Colorant}(img::AbstractArray{T, 2}, ρ::Number, θ::Number, method::Function = bresenham) =
+    line_normal!(img, ρ, θ, one(T), method)
+
+function line_normal!{T<:Colorant}(img::AbstractArray{T, 2}, ρ::Number, θ::Number, color::T, method::Function = bresenham)
+    h,w = size(img)
+    ρ -= 1; h -= 1; w -= 1
+    t = Vector{Number}(4)
+    cosθ = cos(θ)
+    sinθ = sin(θ)
+    t[1] = ( ρ * cosθ    )/ sinθ
+    t[2] = (-ρ * sinθ    )/ cosθ
+    t[3] = ( ρ * cosθ - w)/ sinθ
+    t[4] = (-ρ * sinθ + h)/ cosθ
+    hasInf = false
+    for i in 1:4
+        if ! isfinite(t[i])
+            if ! hasInf
+                t[i] = Inf
+                hasInf = true
+            else
+                t[i] = -Inf
+            end
+        end
+    end
+    sort!(t)
+    method(img, round(Integer, ρ*sinθ + t[2]*cosθ + 1), round(Integer, ρ*cosθ - t[2]*sinθ + 1), round(Integer, ρ*sinθ + t[3]*cosθ + 1), round(Integer, ρ*cosθ - t[3]*sinθ + 1), color)
+end

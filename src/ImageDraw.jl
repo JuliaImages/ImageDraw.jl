@@ -14,6 +14,8 @@ export
 	line,
 	bresenham,
 	xiaolin_wu,
+	line_normal!,
+	line_normal,
 
 	#Ellipse
 	ellipse!,
