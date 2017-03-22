@@ -150,28 +150,28 @@
 		@test expected == res
 	end
 
-	@testset "line_normal" begin
+	@testset "LineNormal" begin
 		img = zeros(Gray, 10, 10)
 		expected = copy(img)
 		expected[1:10, 1] = 1
-		line_normal!(img, 1, 0)
+		line!(img, LineNormal(1, 0))
 		@test img == expected
 		fill!(img,zero(Gray))
-		@test line_normal(img, 1, 0) == expected
+		@test line(img, LineNormal(1, 0)) == expected
 		expected[1:10, 1] = Gray(0.5)
-		@test line_normal(img, 1, 0, Gray(0.5)) == expected
+		@test line(img, LineNormal(1, 0), Gray(0.5)) == expected
 		fill!(expected,zero(Gray))
 		expected[1:10,2] = expected[1:10,7] = expected[10,1:10] = Gray(0.3)
-		line_normal!(img, 2, 0, Gray(0.3))
-		line_normal!(img, 7, 0, Gray(0.3))
-		line_normal!(img, 10, π/2, Gray(0.3))
+		line!(img, LineNormal(2, 0), Gray(0.3))
+		line!(img, LineNormal(7, 0), Gray(0.3))
+		line!(img, LineNormal(10, π/2), Gray(0.3))
 		@test img == expected
 		fill!(img,zero(Gray))
 		fill!(expected,zero(Gray))
 		for i in 1:10
 			expected[i,10-i+1] = 1
 		end
-		@test line_normal(img, 7.5, π/4) == expected
+		@test line(img, LineNormal(7.5, π/4)) == expected
 		for i in 1:10
 			expected[i,10-i+1] = 0.8
 		end
@@ -179,6 +179,11 @@
 		for i in 1:10
 			expected[i,i] = Gray(0.8)
 		end
-		@test line_normal(img,(1,-π/4), Gray(0.8)) == expected
+		@test line(img, LineNormal((0,-π/4)), Gray(0.8)) == expected
+		img = zeros(Gray,3,3)
+		expected = copy(img)
+		@test line(img, LineNormal(4,0)) == expected
+		@test line(img, LineNormal(4,π/2)) == expected
+		@test line(img, LineNormal(5,π/4)) == expected
 	end
 end
