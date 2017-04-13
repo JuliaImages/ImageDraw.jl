@@ -20,5 +20,5 @@ function draw!{T<:Colorant}(img::AbstractArray{T, 2}, circle::CircleThreePoints,
     D != 0 || error("Points do not lie on unique circle")
     R = [[y2 - y3, x3 - x2] [y2 - y1, x1 - x2]] * [(x1^2 + y1^2)-(x2^2 + y2^2), (x2^2 + y2^2)-(x3^2 + y3^2)] / (2 * D)
     ρ = euclidean([x1, y1], R)
-    draw!(img, CirclePointRadius(Point(R[1], R[2]), ρ), color)
+    draw!(img, CirclePointRadius(Point(round(Int,R[1]), round(Int,R[2])), ρ), color)
 end
