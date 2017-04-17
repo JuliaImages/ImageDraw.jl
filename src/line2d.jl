@@ -1,8 +1,8 @@
 
 #Function to return valid intersections of lines with image boundary
 
-function get_valid_intersections(intersections::Vector{Tuple{Real, Real}}, indsx::Base.OneTo{Int}, indsy::Base.OneTo{Int})
-    valid_intersections = Vector{Tuple{Number,Number}}(0)
+function get_valid_intersections{T<:Real, U<:Real}(intersections::Vector{Tuple{T,U}}, indsx::AbstractUnitRange, indsy::AbstractUnitRange)
+    valid_intersections = Vector{Tuple{T,U}}(0)
     for intersection in intersections
         if first(indsx) <= intersection[1] <= last(indsx) && first(indsy) <= intersection[2] <= last(indsy)
             push!(valid_intersections,intersection)
@@ -37,7 +37,7 @@ end
 
 # LineNormal methods
 
-LineNormal(τ::Tuple{Number,Number}) = LineNormal(τ...)
+LineNormal{T<:Real, U<:Real}(τ::Tuple{T,U}) = LineNormal(τ...)
 
 draw!{T<:Colorant}(img::AbstractArray{T,2}, line::LineNormal, method::Function = bresenham) =
     draw!(img, line, one(T), method)

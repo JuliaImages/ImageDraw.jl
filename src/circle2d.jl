@@ -1,7 +1,7 @@
 #CirclePointRadius methods
 
-CirclePointRadius(x::Int, y::Int, ρ::Real) = CirclePointRadius(Point(x,y), ρ)
-CirclePointRadius(p::CartesianIndex{2}, ρ::Real) = CirclePointRadius(Point(p), ρ)
+CirclePointRadius{T<:Real}(x::Int, y::Int, ρ::T) = CirclePointRadius(Point(x,y), ρ)
+CirclePointRadius{T<:Real}(p::CartesianIndex{2}, ρ::T) = CirclePointRadius(Point(p), ρ)
 
 draw!{T<:Colorant}(img::AbstractArray{T, 2}, circle::CirclePointRadius, color::T) = draw!(img, Ellipse(circle), color)
 

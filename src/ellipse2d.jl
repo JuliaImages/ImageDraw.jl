@@ -1,7 +1,7 @@
 #Ellipse methods
 
-Ellipse(x::Int, y::Int, ρx::Real, ρy::Real) = Ellipse(Point(x,y), ρx, ρy)
-Ellipse(p::CartesianIndex{2}, ρx::Real, ρy::Real) = Ellipse(Point(p), ρx, ρy)
+Ellipse{T<:Real, U<:Real}(x::Int, y::Int, ρx::T, ρy::U) = Ellipse(Point(x,y), ρx, ρy)
+Ellipse{T<:Real, U<:Real}(p::CartesianIndex{2}, ρx::T, ρy::U) = Ellipse(Point(p), ρx, ρy)
 Ellipse(circle::CirclePointRadius) = Ellipse(circle.center, circle.ρ, circle.ρ)
 
 function draw!{T<:Colorant}(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T)

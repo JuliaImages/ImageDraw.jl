@@ -1,7 +1,7 @@
 #Path methods
 
-Path(v::Vector{Tuple{Int, Int}}) = Path([Point(p...) for p in v])
-Path(v::Vector{CartesianIndex{2}}) = Path([Point(p) for p in v])
+Path(v::AbstractVector{Tuple{Int, Int}}) = Path([Point(p...) for p in v])
+Path(v::AbstractVector{CartesianIndex{2}}) = Path([Point(p) for p in v])
 
 function draw!{T<:Colorant}(img::AbstractArray{T, 2}, path::Path, color::T)
     vertices = [CartesianIndex(p.y, p.x) for p in path.vertices]
@@ -25,8 +25,8 @@ end
 
 #Polygon methods
 
-Polygon(v::Vector{Tuple{Int, Int}}) = Polygon([Point(p...) for p in v])
-Polygon(v::Vector{CartesianIndex{2}}) = Polygon([Point(p) for p in v])
+Polygon(v::AbstractVector{Tuple{Int, Int}}) = Polygon([Point(p...) for p in v])
+Polygon(v::AbstractVector{CartesianIndex{2}}) = Polygon([Point(p) for p in v])
 
 function draw!{T<:Colorant}(img::AbstractArray{T, 2}, polygon::Polygon, color::T)
     draw!(img, Path(polygon.vertices), color)
@@ -35,7 +35,7 @@ end
 
 #RegularPolygon methods
 
-RegularPolygon(point::CartesianIndex{2}, side_count::Int, side_length::Real, θ::Real) =
+RegularPolygon{T<:Real, U<:Real}(point::CartesianIndex{2}, side_count::Int, side_length::T, θ::U) =
     RegularPolygon(Point(point), side_count, side_length, θ)
 
 function draw!{T<:Colorant}(img::AbstractArray{T, 2}, rp::RegularPolygon, color::T)

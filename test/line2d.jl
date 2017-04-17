@@ -215,5 +215,6 @@
 		expected[diagind(expected)] = RGB{N0f8}(0.2, 0.3, 0.4)
 		res = draw(img2, LineTwoPoints(1,1,10,10), RGB{N0f8}(0.2,0.3,0.4))
 		@test expected == res
+		@test img2 == draw(img2, LineTwoPoints(1,11,10,11))
 	end
 end

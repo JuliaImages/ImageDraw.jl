@@ -34,10 +34,11 @@ end
 
 A `Drawable` infinte length line having perpendicular length `ρ` from
 origin and angle `θ` between the perpendicular and x-axis
+
 """
-immutable LineNormal <: Line
-    ρ::Real
-    θ::Real
+immutable LineNormal{T<:Real, U<:Real} <: Line
+    ρ::T
+    θ::U
 end
 
 """
@@ -52,13 +53,13 @@ immutable CircleThreePoints <: Circle
 end
 
 """
-    circle = CirclePointRadius(p, ρ)
+    circle = CirclePointRadius(center, ρ)
 
-A `Drawable` circle having center `p` and radius `ρ`
+A `Drawable` circle having center `center` and radius `ρ`
 """
-immutable CirclePointRadius <: Circle
+immutable CirclePointRadius{T<:Real} <: Circle
     center::Point
-    ρ::Real
+    ρ::T
 end
 
 """
@@ -74,7 +75,10 @@ end
 """
     path = Path([point])
 
-A `Drawable` sequence of line segments
+A `Drawable` sequence of line segments connecting consecutive pairs
+of points in `[point]`.
+!!! note
+    This will create a non-closed path. For a closed path, see `Polygon`
 """
 immutable Path <: Drawable
     vertices::Vector{Point}
@@ -84,17 +88,21 @@ end
     ellipse = Ellipse(center, ρx, ρy)
 
 A `Drawable` ellipse with center `center` and parameters `ρx` and `ρy`
+
 """
-immutable Ellipse <: Drawable
+immutable Ellipse{T<:Real, U<:Real} <: Drawable
     center::Point
-    ρx::Real
-    ρy::Real
+    ρx::T
+    ρy::U
 end
 
 """
     polygon = Polygon([vertex])
 
-A `Drawable` polygon represented by a `Vector` of vertices
+A `Drawable` polygon i.e. a closed path created by joining the
+consecutive points in `[vertex]` along with the first and last point.
+!!! note
+    This will create a closed path. For a non-closed path, see `Path`
 """
 immutable Polygon <: Drawable
     vertices::Vector{Point}
@@ -109,13 +117,14 @@ A `Drawable` regular polygon.
 * `center::Point` : the center of the polygon
 * `side_count::Int` : number of sides of the polygon
 * `side_length::Real` : length of each side
-* `θ::Real` : orientation of the polygon w.r.t x-axis
+* `θ::Real` : orientation of the polygon w.r.t x-axis (in radians)
+
 """
-immutable RegularPolygon <: Drawable
+immutable RegularPolygon{T<:Real, U<:Real} <: Drawable
     center::Point
     side_count::Int
-    side_length::Real
-    θ::Real
+    side_length::T
+    θ::U
 end
 
 """
@@ -135,20 +144,20 @@ draw!{T<:Colorant}(img::AbstractArray{T,2}, object::Drawable) = draw!(img, objec
 
 Draws all objects in `[drawable]` in the given order on `img` using
 corresponding colors from `[color]` which defaults to `one(eltype(img))`
+If only a single color `color` is specified then all objects will be
+colored with that color.
 """
-function draw!{T<:Colorant, U<:Drawable, V<:Colorant}(img::AbstractArray{T,2}, objects::Vector{U}, colors::Vector{V})
+function draw!{T<:Colorant, U<:Drawable, V<:Colorant}(img::AbstractArray{T,2}, objects::AbstractVector{U}, colors::AbstractVector{V})
     colors = copy(colors)
     while length(colors) < length(objects)
         push!(colors, one(T))
     end
-    map(objects, colors) do object, color
-        draw!(img, object, color)
-    end
+    foreach((object, color) -> draw!(img, object, color), objects, colors)
     img
 end
 
-draw!{T<:Colorant, U<:Drawable}(img::AbstractArray{T,2}, objects::Vector{U}, color::T = one(T)) =
-    draw!(img, objects, [color])
+draw!{T<:Colorant, U<:Drawable}(img::AbstractArray{T,2}, objects::AbstractVector{U}, color::T = one(T)) =
+    draw!(img, objects, [color for i in 1:length(objects)])
 
 """
     img_new = draw(img, drawable, color)
@@ -156,14 +165,15 @@ draw!{T<:Colorant, U<:Drawable}(img::AbstractArray{T,2}, objects::Vector{U}, col
 
 Draws the `drawable` object on a copy of image `img` using color
 `color`. Can also draw multiple `Drawable` objects when passed
-as a `Vector{Drawable}` with corresponding colors in `[color]` 
+as a `AbstractVector{Drawable}` with corresponding colors in `[color]` 
 """
 draw{T<:Colorant}(img::AbstractArray{T,2}, args...) = draw!(copy(img), args...)
 
+Point(τ::Tuple{Int, Int}) = Point(τ...)
 Point(p::CartesianIndex) = Point(p[2], p[1])
 
 function draw!{T<:Colorant}(img::AbstractArray{T,2}, point::Point, color::T)
-    if CartesianIndex(point.y, point.x) ∈ CartesianRange(size(img))
+    if checkbounds(Bool, img, point.y, point.x)
         img[point.y, point.x] = color
     end
     img
