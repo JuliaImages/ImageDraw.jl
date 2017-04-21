@@ -13,12 +13,15 @@ CircleThreePoints(p1::CartesianIndex{2}, p2::CartesianIndex{2}, p3::CartesianInd
     CircleThreePoints(Point(p1), Point(p2), Point(p3))
 
 function draw!{T<:Colorant}(img::AbstractArray{T, 2}, circle::CircleThreePoints, color::T)
+    ind = indices(img)
     x1 = circle.p1.x; y1 = circle.p1.y
     x2 = circle.p2.x; y2 = circle.p2.y
     x3 = circle.p3.x; y3 = circle.p3.y
     D = det([[x1, x2, x3] [y1, y2, y3] [1, 1, 1]])
-    D != 0 || error("Points do not lie on unique circle")
+    ! isapprox(D, 0, rtol = 0, atol = eps(Float64)) || error("Points do not lie on unique circle")
     R = [[y2 - y3, x3 - x2] [y2 - y1, x1 - x2]] * [(x1^2 + y1^2)-(x2^2 + y2^2), (x2^2 + y2^2)-(x3^2 + y3^2)] / (2 * D)
     ρ = euclidean([x1, y1], R)
+    (first(ind[2]) <= R[1] <= last(ind[2]) && first(ind[1]) <= R[2] <= last(ind[1])) || error("Center of circle is out of the bounds of image")
+    ρ - 1 <= minabs([R[1] - first(ind[2]), R[1] - last(ind[2]), R[2] - first(ind[1]), R[2] - last(ind[1])]) || error("Circle is out of the bounds of image : Radius is too large")
     draw!(img, CirclePointRadius(Point(round(Int,R[1]), round(Int,R[2])), ρ), color)
 end
