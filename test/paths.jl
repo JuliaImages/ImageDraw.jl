@@ -9,7 +9,7 @@ using Base.Test
     push!(vert, CartesianIndex(3,3))
     push!(vert, CartesianIndex(3,1))
 
-    img = draw(zeros(Gray{Bool},5,5), Polygon(vert))
+    img = @inferred draw(zeros(Gray{Bool},5,5), Polygon(vert))
     @test all(x->x==true, img[1,:])==true
     @test all(x->x==true, img[1:3,1])==true
     @test all(x->x==true, img[3,1:3])==true
@@ -17,7 +17,7 @@ using Base.Test
     @test img[2,4]==true
 
     img=zeros(Gray{Bool},5,5)
-    draw!(img, Polygon(vert))
+    @inferred draw!(img, Polygon(vert))
     @test all(x->x==true, img[1,:])==true
     @test all(x->x==true, img[1:3,1])==true
     @test all(x->x==true, img[3,1:3])==true
@@ -25,7 +25,7 @@ using Base.Test
     @test img[2,4]==true
 
     img=zeros(RGB{N0f8},5,5)
-    draw!(img, Polygon(vert), RGB(1,0,0))
+    @inferred draw!(img, Polygon(vert), RGB(1,0,0))
     @test all(x->x==RGB{N0f8}(1,0,0), img[1,:])==true
     @test all(x->x==RGB{N0f8}(1,0,0), img[1:3,1])==true
     @test all(x->x==RGB{N0f8}(1,0,0), img[3,1:3])==true
@@ -33,7 +33,7 @@ using Base.Test
     @test img[2,4]==RGB{N0f8}(1,0,0)
 
     poly_tuples = [(1,1),(3,1),(5,1),(3,3),(1,3)]
-    img = draw(zeros(Gray{Bool},5,5), Polygon(poly_tuples))
+    img = @inferred draw(zeros(Gray{Bool},5,5), Polygon(poly_tuples))
     @test all(x->x==true, img[1,:])==true
     @test all(x->x==true, img[1:3,1])==true
     @test all(x->x==true, img[3,1:3])==true
@@ -50,7 +50,7 @@ end
     push!(vert, CartesianIndex(3,1))
 
     img=zeros(RGB{N0f8},5,5)
-    draw!(img, Path(vert))
+    @inferred draw!(img, Path(vert))
     @test all(x->x==RGB{N0f8}(1,1,1), img[1,:])==true
     @test all(x->x==RGB{N0f8}(1,1,1), img[3,1:3])==true
     @test all(x->x==RGB{N0f8}(0,0,0), img[2,1:3])==true
@@ -59,11 +59,18 @@ end
     poly_tuples = [(1,1),(3,1),(5,1),(3,3),(1,3)]
 
     img=zeros(RGB{N0f8},5,5)
-    draw!(img, Path(poly_tuples))
+    @inferred draw!(img, Path(poly_tuples))
     @test all(x->x==RGB{N0f8}(1,1,1), img[1,:])==true
     @test all(x->x==RGB{N0f8}(1,1,1), img[3,1:3])==true
     @test all(x->x==RGB{N0f8}(0,0,0), img[2,1:3])==true
     @test img[2,4]==RGB{N0f8}(1,1,1)
+
+    img = zeros(Gray{N0f8},5,5)
+    invalid_points = [(6,1), (4,4), (1,7), (7,6)]
+    @test_throws ErrorException draw!(img, Path(invalid_points))
+
+    invalid_points = [(4,4), (1,7), (7,6)]
+    @test_throws ErrorException draw!(img, Path(invalid_points))
 end
 
 @testset "RegularPolygon" begin
@@ -73,5 +80,5 @@ end
     expected[7, 2:6] = Gray(1)
     expected[3:7, 2] = Gray(1)
     expected[3:7, 6] = Gray(1)
-    @test all(expected .== draw(img, RegularPolygon(CartesianIndex(5,4), 4, 4, π/4))) == true
+    @test all(expected .== @inferred draw(img, RegularPolygon(CartesianIndex(5,4), 4, 4, π/4))) == true
 end
