@@ -1,7 +1,7 @@
 """
 Type representing any object drawable on image
 """
-abstract Drawable
+@compat abstract type Drawable end
 
 """
     p = Point(x,y)
@@ -14,8 +14,8 @@ immutable Point <: Drawable
     y::Int
 end
 
-abstract Line <: Drawable
-abstract Circle <: Drawable
+@compat abstract type Line <: Drawable end
+@compat abstract type Circle <: Drawable end
 
 
 """

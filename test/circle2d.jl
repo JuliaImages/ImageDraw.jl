@@ -58,5 +58,8 @@
         invalid_circle = CircleThreePoints(Point(1,1), Point(2,2), Point(3,3))
         @test_throws ErrorException draw(img, invalid_circle)
 
+        invalid_circle = CircleThreePoints(Point(1,1), Point(5,5), Point(10,1))
+        @test_throws ErrorException draw(img, invalid_circle)
+
     end
 end
