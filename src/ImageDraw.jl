@@ -1,34 +1,48 @@
 module ImageDraw
 
 # package code goes here
-using ImageCore, ColorTypes
+using ImageCore, ColorTypes, Distances, Compat
 
+include("core.jl")
 include("line2d.jl")
 include("ellipse2d.jl")
 include("circle2d.jl")
 include("paths.jl")
 
-#export Types
-export LineTwoPoints, LineNormal
-
-#export Methods
+#export methods
 export
-	#Lines
-	line!,
-	line,
+	draw,
+	draw!,
 	bresenham,
-	xiaolin_wu,
+	xiaolin_wu
+
+#export types
+export
+	#Drawable
+	Drawable,
+
+	#Point
+	Point,
+
+	#Lines
+	LineNormal,
+	LineTwoPoints,
+
+	#LineSegment
+	LineSegment,
 
 	#Ellipse
-	ellipse!,
-	ellipse,
+	Ellipse,
 
-	#Circle
-	circle!,
-	circle,
+	#Circles
+	CirclePointRadius,
+	CircleThreePoints,
 
-	#Paths
-	path!,
-	path
+	#Path
+	Path,
+
+	#Polygons
+	Polygon,
+	RegularPolygon
 
 end # module
