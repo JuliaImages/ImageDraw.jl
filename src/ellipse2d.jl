@@ -1,10 +1,10 @@
 #Ellipse methods
 
-Ellipse{T<:Real, U<:Real}(x::Int, y::Int, ρx::T, ρy::U) = Ellipse(Point(x,y), ρx, ρy)
-Ellipse{T<:Real, U<:Real}(p::CartesianIndex{2}, ρx::T, ρy::U) = Ellipse(Point(p), ρx, ρy)
+Ellipse(x::Int, y::Int, ρx::T, ρy::U) where {T<:Real, U<:Real} = Ellipse(Point(x,y), ρx, ρy)
+Ellipse(p::CartesianIndex{2}, ρx::T, ρy::U) where {T<:Real, U<:Real} = Ellipse(Point(p), ρx, ρy)
 Ellipse(circle::CirclePointRadius) = Ellipse(circle.center, circle.ρ, circle.ρ)
 
-function draw!{T<:Colorant}(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T)
+function draw!(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T) where T<:Colorant
 	ys = Int[]
 	xs = Int[]
 	for i in ellipse.center.y : ellipse.center.y + ellipse.ρy

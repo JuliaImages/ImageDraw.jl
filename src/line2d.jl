@@ -1,7 +1,7 @@
 
 #Function to return valid intersections of lines with image boundary
 
-function get_valid_intersections{T<:Real, U<:Real}(intersections::Vector{Tuple{T,U}}, indsx::AbstractUnitRange, indsy::AbstractUnitRange)
+function get_valid_intersections(intersections::Vector{Tuple{T,U}}, indsx::AbstractUnitRange, indsy::AbstractUnitRange) where {T<:Real, U<:Real}
     valid_intersections = Vector{Tuple{T,U}}(0)
     for intersection in intersections
         if first(indsx) <= intersection[1] <= last(indsx) && first(indsy) <= intersection[2] <= last(indsy)
@@ -16,10 +16,10 @@ end
 LineTwoPoints(x0::Int, y0::Int, x1::Int, y1::Int) = LineTwoPoints(Point(x0, y0), Point(x1,y1))
 LineTwoPoints(p1::CartesianIndex{2}, p2::CartesianIndex{2}) = LineTwoPoints(Point(p1), Point(p2))
 
-draw!{T<:Colorant}(img::AbstractArray{T,2}, line::LineTwoPoints, method::Function = bresenham) =
+draw!(img::AbstractArray{T,2}, line::LineTwoPoints, method::Function = bresenham) where {T<:Colorant} =
     draw!(img, line, one(T), method)
 
-function draw!{T<:Colorant}(img::AbstractArray{T,2}, line::LineTwoPoints, color::T, method::Function = bresenham)
+function draw!(img::AbstractArray{T,2}, line::LineTwoPoints, color::T, method::Function = bresenham) where T<:Colorant
     indsy, indsx = indices(img)
     x1 = line.p1.x; y1 = line.p1.y
     x2 = line.p2.x; y2 = line.p2.y
@@ -37,12 +37,12 @@ end
 
 # LineNormal methods
 
-LineNormal{T<:Real, U<:Real}(τ::Tuple{T,U}) = LineNormal(τ...)
+LineNormal(τ::Tuple{T,U}) where {T<:Real, U<:Real} = LineNormal(τ...)
 
-draw!{T<:Colorant}(img::AbstractArray{T,2}, line::LineNormal, method::Function = bresenham) =
+draw!(img::AbstractArray{T,2}, line::LineNormal, method::Function = bresenham) where {T<:Colorant} =
     draw!(img, line, one(T), method)
 
-function draw!{T<:Colorant}(img::AbstractArray{T, 2}, line::LineNormal, color::T, method::Function = bresenham)
+function draw!(img::AbstractArray{T, 2}, line::LineNormal, color::T, method::Function = bresenham) where T<:Colorant
     indsy, indsx = indices(img)
     cosθ = cos(line.θ)
     sinθ = sin(line.θ)
@@ -61,15 +61,15 @@ end
 LineSegment(x0::Int, y0::Int, x1::Int, y1::Int) = LineSegment(Point(x0, y0), Point(x1,y1))
 LineSegment(p1::CartesianIndex, p2::CartesianIndex) = LineSegment(Point(p1), Point(p2))
 
-draw!{T<:Colorant}(img::AbstractArray{T,2}, line::LineSegment, method::Function = bresenham) =
+draw!(img::AbstractArray{T,2}, line::LineSegment, method::Function = bresenham) where {T<:Colorant} =
     draw!(img, line, one(T), method)
 
-draw!{T<:Colorant}(img::AbstractArray{T,2}, line::LineSegment, color::T, method::Function = bresenham) =
+draw!(img::AbstractArray{T,2}, line::LineSegment, color::T, method::Function = bresenham) where {T<:Colorant} =
     method(img, line.p1.y, line.p1.x, line.p2.y, line.p2.x, color)
 
 # Methods to draw lines
 
-function bresenham{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T)
+function bresenham(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T) where T<:Colorant
     dx = abs(x1 - x0)
     dy = abs(y1 - y0)
 
@@ -95,14 +95,14 @@ function bresenham{T<:Colorant}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::
     img
 end
 
-fpart{T}(pixel::T) = pixel - T(trunc(pixel))
-rfpart{T}(pixel::T) = one(T) - fpart(pixel)
+fpart(pixel::T) where {T} = pixel - T(trunc(pixel))
+rfpart(pixel::T) where {T} = one(T) - fpart(pixel)
 
 function swap(x, y)
     y, x
 end
 
-function xiaolin_wu{T<:Gray}(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T)
+function xiaolin_wu(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T) where T<:Gray
     dx = x1 - x0
     dy = y1 - y0
 

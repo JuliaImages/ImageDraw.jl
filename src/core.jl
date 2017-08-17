@@ -1,7 +1,7 @@
 """
 Type representing any object drawable on image
 """
-@compat abstract type Drawable end
+abstract type Drawable end
 
 """
     p = Point(x,y)
@@ -9,13 +9,13 @@ Type representing any object drawable on image
 
 A `Drawable` point on the image
 """
-immutable Point <: Drawable
+struct Point <: Drawable
     x::Int
     y::Int
 end
 
-@compat abstract type Line <: Drawable end
-@compat abstract type Circle <: Drawable end
+abstract type Line <: Drawable end
+abstract type Circle <: Drawable end
 
 
 """
@@ -24,7 +24,7 @@ end
 A `Drawable` infinite length line passing through the two points
 `p1` and `p2`.
 """
-immutable LineTwoPoints <: Line
+struct LineTwoPoints <: Line
     p1::Point
     p2::Point
 end
@@ -36,7 +36,7 @@ A `Drawable` infinte length line having perpendicular length `ρ` from
 origin and angle `θ` between the perpendicular and x-axis
 
 """
-immutable LineNormal{T<:Real, U<:Real} <: Line
+struct LineNormal{T<:Real, U<:Real} <: Line
     ρ::T
     θ::U
 end
@@ -46,7 +46,7 @@ end
 
 A `Drawable` circle passing through points `p1`, `p2` and `p3`
 """
-immutable CircleThreePoints <: Circle
+struct CircleThreePoints <: Circle
     p1::Point
     p2::Point
     p3::Point
@@ -57,7 +57,7 @@ end
 
 A `Drawable` circle having center `center` and radius `ρ`
 """
-immutable CirclePointRadius{T<:Real} <: Circle
+struct CirclePointRadius{T<:Real} <: Circle
     center::Point
     ρ::T
 end
@@ -67,7 +67,7 @@ end
 
 A `Drawable` finite length line between `p1` and `p2`
 """
-immutable LineSegment <: Drawable
+struct LineSegment <: Drawable
     p1::Point
     p2::Point
 end
@@ -80,7 +80,7 @@ of points in `[point]`.
 !!! note
     This will create a non-closed path. For a closed path, see `Polygon`
 """
-immutable Path <: Drawable
+struct Path <: Drawable
     vertices::Vector{Point}
 end
 
@@ -90,7 +90,7 @@ end
 A `Drawable` ellipse with center `center` and parameters `ρx` and `ρy`
 
 """
-immutable Ellipse{T<:Real, U<:Real} <: Drawable
+struct Ellipse{T<:Real, U<:Real} <: Drawable
     center::Point
     ρx::T
     ρy::U
@@ -104,7 +104,7 @@ consecutive points in `[vertex]` along with the first and last point.
 !!! note
     This will create a closed path. For a non-closed path, see `Path`
 """
-immutable Polygon <: Drawable
+struct Polygon <: Drawable
     vertices::Vector{Point}
 end
 
@@ -120,7 +120,7 @@ A `Drawable` regular polygon.
 * `θ::Real` : orientation of the polygon w.r.t x-axis (in radians)
 
 """
-immutable RegularPolygon{T<:Real, U<:Real} <: Drawable
+struct RegularPolygon{T<:Real, U<:Real} <: Drawable
     center::Point
     side_count::Int
     side_length::T
@@ -134,7 +134,7 @@ end
 Draws `drawable` on `img` using color `color` which
 defaults to `one(eltype(img))`
 """
-draw!{T<:Colorant}(img::AbstractArray{T,2}, object::Drawable) = draw!(img, object, one(T))
+draw!(img::AbstractArray{T,2}, object::Drawable) where {T<:Colorant} = draw!(img, object, one(T))
 
 
 """
@@ -147,7 +147,7 @@ corresponding colors from `[color]` which defaults to `one(eltype(img))`
 If only a single color `color` is specified then all objects will be
 colored with that color.
 """
-function draw!{T<:Colorant, U<:Drawable, V<:Colorant}(img::AbstractArray{T,2}, objects::AbstractVector{U}, colors::AbstractVector{V})
+function draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, colors::AbstractVector{V}) where {T<:Colorant, U<:Drawable, V<:Colorant}
     colors = copy(colors)
     while length(colors) < length(objects)
         push!(colors, one(T))
@@ -156,7 +156,7 @@ function draw!{T<:Colorant, U<:Drawable, V<:Colorant}(img::AbstractArray{T,2}, o
     img
 end
 
-draw!{T<:Colorant, U<:Drawable}(img::AbstractArray{T,2}, objects::AbstractVector{U}, color::T = one(T)) =
+draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, color::T = one(T)) where {T<:Colorant, U<:Drawable} =
     draw!(img, objects, [color for i in 1:length(objects)])
 
 """
@@ -167,12 +167,12 @@ Draws the `drawable` object on a copy of image `img` using color
 `color`. Can also draw multiple `Drawable` objects when passed
 as a `AbstractVector{Drawable}` with corresponding colors in `[color]` 
 """
-draw{T<:Colorant}(img::AbstractArray{T,2}, args...) = draw!(copy(img), args...)
+draw(img::AbstractArray{T,2}, args...) where {T<:Colorant} = draw!(copy(img), args...)
 
 Point(τ::Tuple{Int, Int}) = Point(τ...)
 Point(p::CartesianIndex) = Point(p[2], p[1])
 
-function draw!{T<:Colorant}(img::AbstractArray{T,2}, point::Point, color::T)
+function draw!(img::AbstractArray{T,2}, point::Point, color::T) where T<:Colorant
     if checkbounds(Bool, img, point.y, point.x)
         img[point.y, point.x] = color
     end
