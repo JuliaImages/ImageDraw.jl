@@ -1,9 +1,9 @@
 #CirclePointRadius methods
 
-CirclePointRadius{T<:Real}(x::Int, y::Int, ρ::T) = CirclePointRadius(Point(x,y), ρ)
-CirclePointRadius{T<:Real}(p::CartesianIndex{2}, ρ::T) = CirclePointRadius(Point(p), ρ)
+CirclePointRadius(x::Int, y::Int, ρ::T) where {T<:Real} = CirclePointRadius(Point(x,y), ρ)
+CirclePointRadius(p::CartesianIndex{2}, ρ::T) where {T<:Real} = CirclePointRadius(Point(p), ρ)
 
-draw!{T<:Colorant}(img::AbstractArray{T, 2}, circle::CirclePointRadius, color::T) = draw!(img, Ellipse(circle), color)
+draw!(img::AbstractArray{T, 2}, circle::CirclePointRadius, color::T) where {T<:Colorant} = draw!(img, Ellipse(circle), color)
 
 #CircleThreePoints methods
 
@@ -12,7 +12,7 @@ CircleThreePoints(x1::Int, y1::Int, x2::Int, y2::Int, x3::Int, y3::Int) =
 CircleThreePoints(p1::CartesianIndex{2}, p2::CartesianIndex{2}, p3::CartesianIndex{2}) =
     CircleThreePoints(Point(p1), Point(p2), Point(p3))
 
-function draw!{T<:Colorant}(img::AbstractArray{T, 2}, circle::CircleThreePoints, color::T)
+function draw!(img::AbstractArray{T, 2}, circle::CircleThreePoints, color::T) where T<:Colorant
     ind = indices(img)
     x1 = circle.p1.x; y1 = circle.p1.y
     x2 = circle.p2.x; y2 = circle.p2.y
