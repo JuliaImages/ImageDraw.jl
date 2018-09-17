@@ -1,3 +1,5 @@
+using LinearAlgebra
+
 @testset "Circle" begin
     @testset "CirclePointRadius" begin
         img = zeros(Gray{N0f8}, 10, 10)

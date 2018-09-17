@@ -1,5 +1,5 @@
 using ImageDraw, ColorTypes, FixedPointNumbers
-using Base.Test
+using Test
 
 @testset "Polygon" begin
     vert=CartesianIndex{2}[]
@@ -76,9 +76,9 @@ end
 @testset "RegularPolygon" begin
     img = zeros(Gray, 10, 10)
     expected = copy(img)
-    expected[3, 2:6] = Gray(1)
-    expected[7, 2:6] = Gray(1)
-    expected[3:7, 2] = Gray(1)
-    expected[3:7, 6] = Gray(1)
+    expected[3, 2:6] .= Gray(1)
+    expected[7, 2:6] .= Gray(1)
+    expected[3:7, 2] .= Gray(1)
+    expected[3:7, 6] .= Gray(1)
     @test all(expected .== @inferred draw(img, RegularPolygon(CartesianIndex(5,4), 4, 4, π/4))) == true
 end

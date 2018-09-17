@@ -3,7 +3,7 @@
     img = zeros(Gray{N0f8}, 10, 10)
     expected = copy(img)
     res = @inferred draw(img, Ellipse(Point(5,5), 5, 1))
-    expected[5, 1:9] = 1
+    expected[5, 1:9] .= 1
     @test all(expected .== res) == true
 
     res = @inferred draw(img, Ellipse(5, 5, 5, 5), oneunit(Gray{N0f8}))

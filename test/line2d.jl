@@ -157,9 +157,11 @@
 		@inferred draw!(img, LineNormal(1, 0))
 		@test img == expected
 		fill!(img,zero(Gray))
-		@test @inferred draw(img, LineNormal(1, 0)) == expected
+		res = @inferred draw(img, LineNormal(1, 0))
+		@test expected == res
 		expected[1:10, 1] .= Gray(0.5)
-		@test @inferred draw(img, LineNormal(1, 0), Gray(0.5)) == expected
+		res = @inferred draw(img, LineNormal(1, 0), Gray(0.5))
+		@test expected == res
 		fill!(expected,zero(Gray))
 		expected[1:10,2] .= expected[1:10,7] .= expected[10,1:10] .= Gray(0.3)
 		@inferred draw!(img, LineNormal(2, 0), Gray(0.3))
@@ -171,7 +173,8 @@
 		for i in 1:10
 			expected[i,10-i+1] = 1
 		end
-		@test @inferred draw(img, LineNormal(7.5, π/4)) == expected
+		res = @inferred draw(img, LineNormal(7.5, π/4))
+		@test expected == res
 		for i in 1:10
 			expected[i,10-i+1] = 0.8
 		end
@@ -179,12 +182,16 @@
 		for i in 1:10
 			expected[i,i] = Gray(0.8)
 		end
-		@test @inferred draw(img, LineNormal((0,-π/4)), Gray(0.8)) == expected
+		res = @inferred draw(img, LineNormal((0,-π/4)), Gray(0.8))
+		@test expected == res
 		img = zeros(Gray,3,3)
 		expected = copy(img)
-		@test @inferred draw(img, LineNormal(4,0)) == expected
-		@test @inferred draw(img, LineNormal(4,π/2)) == expected
-		@test @inferred draw(img, LineNormal(5,π/4)) == expected
+		res = @inferred draw(img, LineNormal(4,0))
+		@test expected == res
+		res = @inferred draw(img, LineNormal(4,π/2))
+		@test expected == res
+		res = @inferred draw(img, LineNormal(5,π/4))
+		@test expected == res
 	end
 
 	@testset "LineTwoPoints" begin

@@ -1,3 +1,5 @@
+import LinearAlgebra: det
+
 #CirclePointRadius methods
 
 CirclePointRadius(x::Int, y::Int, ρ::T) where {T<:Real} = CirclePointRadius(Point(x,y), ρ)
