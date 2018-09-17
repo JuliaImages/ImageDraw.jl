@@ -132,9 +132,9 @@ end
     img = draw!(img, drawable)
 
 Draws `drawable` on `img` using color `color` which
-defaults to `one(eltype(img))`
+defaults to `oneunit(eltype(img))`
 """
-draw!(img::AbstractArray{T,2}, object::Drawable) where {T<:Colorant} = draw!(img, object, one(T))
+draw!(img::AbstractArray{T,2}, object::Drawable) where {T<:Colorant} = draw!(img, object, oneunit(T))
 
 
 """
@@ -143,20 +143,20 @@ draw!(img::AbstractArray{T,2}, object::Drawable) where {T<:Colorant} = draw!(img
     img = draw!(img, [drawable])
 
 Draws all objects in `[drawable]` in the given order on `img` using
-corresponding colors from `[color]` which defaults to `one(eltype(img))`
+corresponding colors from `[color]` which defaults to `oneunit(eltype(img))`
 If only a single color `color` is specified then all objects will be
 colored with that color.
 """
 function draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, colors::AbstractVector{V}) where {T<:Colorant, U<:Drawable, V<:Colorant}
     colors = copy(colors)
     while length(colors) < length(objects)
-        push!(colors, one(T))
+        push!(colors, oneunit(T))
     end
     foreach((object, color) -> draw!(img, object, color), objects, colors)
     img
 end
 
-draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, color::T = one(T)) where {T<:Colorant, U<:Drawable} =
+draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, color::T = oneunit(T)) where {T<:Colorant, U<:Drawable} =
     draw!(img, objects, [color for i in 1:length(objects)])
 
 """
@@ -165,7 +165,7 @@ draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, color::T = one(T)) wh
 
 Draws the `drawable` object on a copy of image `img` using color
 `color`. Can also draw multiple `Drawable` objects when passed
-as a `AbstractVector{Drawable}` with corresponding colors in `[color]` 
+as a `AbstractVector{Drawable}` with corresponding colors in `[color]`
 """
 draw(img::AbstractArray{T,2}, args...) where {T<:Colorant} = draw!(copy(img), args...)
 

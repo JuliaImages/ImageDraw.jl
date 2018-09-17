@@ -1,6 +1,7 @@
 module ImageDrawTest
 
-using Base.Test, ImageDraw, ImageCore, ColorTypes, ColorVectorSpace, FixedPointNumbers
+using Test
+using ImageDraw, ImageCore, ColorTypes, ColorVectorSpace, FixedPointNumbers
 
 tests = [
     "core.jl",

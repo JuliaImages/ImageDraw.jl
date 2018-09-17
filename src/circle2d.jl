@@ -13,7 +13,7 @@ CircleThreePoints(p1::CartesianIndex{2}, p2::CartesianIndex{2}, p3::CartesianInd
     CircleThreePoints(Point(p1), Point(p2), Point(p3))
 
 function draw!(img::AbstractArray{T, 2}, circle::CircleThreePoints, color::T) where T<:Colorant
-    ind = indices(img)
+    ind = axes(img)
     x1 = circle.p1.x; y1 = circle.p1.y
     x2 = circle.p2.x; y2 = circle.p2.y
     x3 = circle.p3.x; y3 = circle.p3.y
