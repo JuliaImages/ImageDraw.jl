@@ -5,8 +5,8 @@ Path(v::AbstractVector{CartesianIndex{2}}) = Path([Point(p) for p in v])
 
 function draw!(img::AbstractArray{T, 2}, path::Path, color::T) where T<:Colorant
     vertices = [CartesianIndex(p.y, p.x) for p in path.vertices]
-    f = CartesianIndex(map(r->first(r)-1, indices(img)))
-    l = CartesianIndex(map(r->last(r), indices(img)))
+    f = CartesianIndex(map(r->first(r)-1, axes(img)))
+    l = CartesianIndex(map(r->last(r), axes(img)))
 
     if min(f,vertices[1])!=f || max(l,vertices[1])!=l
         println(vertices[1])
