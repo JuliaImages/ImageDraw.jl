@@ -1,7 +1,7 @@
 module ImageDraw
 
 # package code goes here
-using ImageCore, ColorTypes, Distances, Compat
+using ImageCore, Distances
 
 include("core.jl")
 include("line2d.jl")

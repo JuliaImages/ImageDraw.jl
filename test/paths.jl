@@ -1,4 +1,4 @@
-using ImageDraw, ColorTypes, FixedPointNumbers
+using ImageDraw
 using Test
 
 @testset "Polygon" begin
