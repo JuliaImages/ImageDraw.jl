@@ -9,7 +9,7 @@ ImageCore = "a09fc81d-aa75-5fe9-8630-4744c3626534"
 [compat]
 Distances = ">= 0.1.0"
 ImageCore = ">= 0.8.1"
-julia = ">= 1.0"
+julia = "1"
 
 [extras]
 ColorVectorSpace = "c3611d14-8923-5661-9e6a-0046d554d3a4"
