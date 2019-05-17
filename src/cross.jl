@@ -1,13 +1,4 @@
 """
-    cross = Cross(c, range::UnitRange{Int})
-A `Drawable` cross passing through the point `c` with arms ranging across `range`.
-"""
-struct Cross <: Drawable
-    c::Point
-    range::UnitRange{Int}
-end
-
-"""
     cross = Cross(c, arm::Int)
 A `Drawable` cross passing through the point `c` with arms that are `arm` pixels long.
 """
