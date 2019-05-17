@@ -128,6 +128,15 @@ struct RegularPolygon{T<:Real, U<:Real} <: Drawable
 end
 
 """
+    cross = Cross(c, range::UnitRange{Int})
+A `Drawable` cross passing through the point `c` with arms ranging across `range`.
+"""
+struct Cross <: Drawable
+    c::Point
+    range::UnitRange{Int}
+end
+
+"""
     img = draw!(img, drawable, color)
     img = draw!(img, drawable)
 
