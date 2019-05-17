@@ -43,6 +43,9 @@ export
 
 	#Polygons
 	Polygon,
-	RegularPolygon
+	RegularPolygon,
+
+	#Cross
+	Cross
 
 end # module
