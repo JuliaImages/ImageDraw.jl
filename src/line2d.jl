@@ -79,7 +79,7 @@ function bresenham(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int,
     err = (dx > dy ? dx : -dy) / 2
 
     while true
-        img[y0, x0] = color
+        drawifinbounds!(img, y0, x0, color)
         (x0 != x1 || y0 != y1) || break
         e2 = err
         if e2 > -dx
@@ -125,9 +125,9 @@ function xiaolin_wu(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int
     xpxl0 = xend
     ypxl0 = trunc(Int, yend)
     index = swapped ? CartesianIndex(xpxl0, ypxl0) : CartesianIndex(ypxl0, xpxl0)
-    if checkbounds(Bool, img, index) img[index] = T(rfpart(yend) * xgap) end
+    drawifinbounds!(img, index, T(rfpart(yend) * xgap))
     index = swapped ? CartesianIndex(xpxl0, ypxl0 + 1) : CartesianIndex(ypxl0 + 1, xpxl0)
-    if checkbounds(Bool, img, index) img[index] = T(fpart(yend) * xgap) end
+    drawifinbounds!(img, index, T(fpart(yend) * xgap))
     intery = yend + gradient
 
     xend = round(Int, x1)
@@ -136,15 +136,15 @@ function xiaolin_wu(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int
     xpxl1 = xend
     ypxl1 = trunc(Int, yend)
     index = swapped ? CartesianIndex(xpxl1, ypxl1) : CartesianIndex(ypxl1, xpxl1)
-    if checkbounds(Bool, img, index) img[index] = T(rfpart(yend) * xgap) end
+    drawifinbounds!(img, index, T(rfpart(yend) * xgap))
     index = swapped ? CartesianIndex(xpxl1, ypxl1 + 1) : CartesianIndex(ypxl1 + 1, xpxl1)
-    if checkbounds(Bool, img, index) img[index] = T(fpart(yend) * xgap) end
+    drawifinbounds!(img, index, T(fpart(yend) * xgap))
 
     for i in (xpxl0 + 1):(xpxl1 - 1)
         index = swapped ? CartesianIndex(i, trunc(Int, intery)) : CartesianIndex(trunc(Int, intery), i)
-        if checkbounds(Bool, img, index) img[index] = T(rfpart(intery)) end
+        drawifinbounds!(img, index, T(rfpart(intery)))
         index = swapped ? CartesianIndex(i, trunc(Int, intery) + 1) : CartesianIndex(trunc(Int, intery) + 1, i)
-        if checkbounds(Bool, img, index) img[index] = T(fpart(intery)) end
+        drawifinbounds!(img, index, T(fpart(intery)))
         intery += gradient
     end
     img

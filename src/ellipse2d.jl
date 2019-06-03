@@ -17,10 +17,10 @@ function draw!(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T) where T<:Co
 		end
 	end
 	for (yi, xi) in zip(ys, xs)
-		img[yi, xi] = color
-		img[2 * ellipse.center.y - yi, xi] = color
-		img[yi, 2 * ellipse.center.x - xi] = color
-		img[2 * ellipse.center.y - yi, 2 * ellipse.center.x - xi] = color
+		drawifinbounds!(img, yi, xi, color)
+		drawifinbounds!(img,2 * ellipse.center.y - yi, xi, color)
+		drawifinbounds!(img,yi, 2 * ellipse.center.x - xi, color)
+		drawifinbounds!(img, 2 * ellipse.center.y - yi, 2 * ellipse.center.x - xi, color)
 	end
 	img
 end
