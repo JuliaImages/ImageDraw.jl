@@ -4,33 +4,36 @@ Path(v::AbstractVector{Tuple{Int, Int}}) = Path([Point(p...) for p in v])
 Path(v::AbstractVector{CartesianIndex{2}}) = Path([Point(p) for p in v])
 
 function draw!(img::AbstractArray{T, 2}, path::Path, color::T) where T<:Colorant
-    vertices = [CartesianIndex(p.y, p.x) for p in path.vertices]
+	    vertices = [CartesianIndex(p.y, p.x) for p in path.vertices]
+	    f = CartesianIndex(map(r->first(r)-1, axes(img)))
+	    l = CartesianIndex(map(r->last(r), axes(img)))
 
-    for i in 1:length(vertices)-1
-        draw!(img, LineSegment(vertices[i], vertices[i+1]), color)
-    end
+	    for i in 1:length(vertices)-1
+			draw!(img, LineSegment(vertices[i], vertices[i+1]), color)
+	    end
 
-    # No need for corrdinate checking at this level as draw!(::LineSegment, ...)
-    # checks and only draws pixels which are on the image
+		img
+	    # No need for corrdinate checking at this level as draw!(::LineSegment, ...)
+	    # checks and only draws pixels which are on the image
 
-    # f = CartesianIndex(map(r->first(r)-1, axes(img)))
-    # l = CartesianIndex(map(r->last(r), axes(img)))
+	    # f = CartesianIndex(map(r->first(r)-1, axes(img)))
+	    # l = CartesianIndex(map(r->last(r), axes(img)))
 
-    # if min(f,vertices[1])!=f || max(l,vertices[1])!=l
-    #     println(vertices[1])
-    #     error("Point coordinates out of range.")
-    # end
-    #
-    # for i in 1:length(vertices)-1
-    #     if min(f,vertices[i+1])==f && max(l,vertices[i+1])==l
-    #         draw!(img, LineSegment(vertices[i], vertices[i+1]), color)
-    #     else
-    #         println(vertices[i+1])
-    #         error("Point coordinates out of range.")
-    #     end
-    # end
+	    # if min(f,vertices[1])!=f || max(l,vertices[1])!=l
+	    #     println(vertices[1])
+	    #     error("Point coordinates out of range.")
+	    # end
+	    #
+	    # for i in 1:length(vertices)-1
+	    #     if min(f,vertices[i+1])==f && max(l,vertices[i+1])==l
+	    #         draw!(img, LineSegment(vertices[i], vertices[i+1]), color)
+	    #     else
+	    #         println(vertices[i+1])
+	    #         error("Point coordinates out of range.")
+	    #     end
+	    # end
 
-end
+	end
 
 #Polygon methods
 
