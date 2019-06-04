@@ -182,8 +182,24 @@ Point(τ::Tuple{Int, Int}) = Point(τ...)
 Point(p::CartesianIndex) = Point(p[2], p[1])
 
 function draw!(img::AbstractArray{T,2}, point::Point, color::T) where T<:Colorant
-    if checkbounds(Bool, img, point.y, point.x)
-        img[point.y, point.x] = color
-    end
+    drawifinbounds!(img, point, color)
+end
+
+"""
+
+    img_new = drawifinbounds!(img, y, x, color)
+    img_new = drawifinbounds!(img, Point, color)
+    img_new = drawifinbounds!(img, CartesianIndex, color)
+
+Draws a single point after checkbounds() for coordinate in the image.
+Color Defaults to oneunit(T)
+
+"""
+
+drawifinbounds!(img::AbstractArray{T,2}, p::Point, color::T = oneunit(T)) where {T<:Colorant} = drawifinbounds!(img, p.y, p.x, color)
+drawifinbounds!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T = oneunit(T)) where {T<:Colorant} = drawifinbounds!(img, Point(p), color)
+
+function drawifinbounds!(img::AbstractArray{T,2}, y::Int, x::Int, color::T) where {T<:Colorant}
+    if checkbounds(Bool, img, y, x) img[y, x] = color end
     img
 end
