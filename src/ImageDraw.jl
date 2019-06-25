@@ -1,7 +1,7 @@
 module ImageDraw
 
 # package code goes here
-using ImageCore, Distances
+using ImageCore, Distances, Combinatorics
 
 include("core.jl")
 include("line2d.jl")
