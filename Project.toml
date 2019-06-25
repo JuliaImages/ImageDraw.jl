@@ -1,6 +1,6 @@
 name = "ImageDraw"
 uuid = "4381153b-2b60-58ae-a1ba-fd683676385f"
-version = "0.2.1"
+version = "0.2.3"
 
 [deps]
 Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
