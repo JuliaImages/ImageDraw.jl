@@ -17,10 +17,36 @@ end
 abstract type AbstractPath <: Drawable end
 abstract type AbstractLine <: Drawable end
 abstract type AbstractShape <: Drawable end
+abstract type AbstractBackground <: Drawable end
+
 
 abstract type AbstractPolygon <: AbstractShape end
 abstract type AbstractEllipse <: AbstractShape end
 abstract type AbstractCircle <: AbstractEllipse end
+
+"""
+    background = SolidBackground(color)
+
+A `Drawable` background that will fill the 'background' of an image with
+the set color
+"""
+
+struct SolidBackground{T<:Colorant} <: AbstractBackground
+    color::T
+end
+
+"""
+    background = StripedBackground(color)
+
+A `Drawable` background that will fill the 'background' of an image with
+the given colors at the intervals given at the given angle
+"""
+
+struct StripedBackground{T<:Colorant,  U<:Real, V<:Real} <: AbstractBackground
+    colors::Vector{T}
+    distances::Vector{U}
+    θ::V
+end
 
 
 """
