@@ -9,12 +9,12 @@
 """
 generatecanvas(colortype::Type, x::Int, y::Int) = zeros(colortype, (x,y))
 
-generatecanvas(colortype::Type, size::Vector{Int}) = zeros(colortype, (size...))
+generatecanvas(colortype::Type, size::NTuple{Int, 2}) = zeros(colortype, (size...))
 
 generatecanvas(colortype::Type, x::Int, y::Int, b::AbstractBackground) =
-    generatecanvas(colortype, [x,y], b)
+    generatecanvas(colortype, (x,y), b)
 
-function generatecanvas(colortype::Type, size::Vector{Int}, b::AbstractBackground)
+function generatecanvas(colortype::Type, size::NTuple{Int, 2}, b::AbstractBackground)
     draw!(zeros(colortype, (size...)), b)
 end
 
