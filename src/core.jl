@@ -17,10 +17,39 @@ end
 abstract type AbstractPath <: Drawable end
 abstract type AbstractLine <: Drawable end
 abstract type AbstractShape <: Drawable end
+abstract type AbstractBackground <: Drawable end
+
 
 abstract type AbstractPolygon <: AbstractShape end
 abstract type AbstractEllipse <: AbstractShape end
 abstract type AbstractCircle <: AbstractEllipse end
+
+"""
+    background = SolidBackground(color)
+
+A `Drawable` background that will fill the 'background' of an image with
+the set color
+"""
+
+struct SolidBackground{T<:Colorant} <: AbstractBackground
+    color::T
+end
+
+"""
+    background = StripedBackground(color)
+
+A `Drawable` background that will fill the 'background' of an image with
+the given colors at the intervals given at the given angle
+"""
+
+struct StripedBackground{T<:Colorant,  U<:Real, V<:Real} <: AbstractBackground
+    colors::Vector{T}
+    distances::Vector{U}
+    θ::V
+end
+
+
+struct NoisyBackground <: AbstractBackground end
 
 
 """
@@ -142,6 +171,17 @@ struct Cross <: AbstractPath
 end
 
 """
+    img_map = ImageMap(img, x, y)
+
+Overlays an image on an larger image. (x, y) is the center for placing the image
+"""
+struct ImageMap <: Drawable
+    image
+    x
+    y
+end
+
+"""
     img = draw!(img, drawable, color)
     img = draw!(img, drawable)
 
@@ -186,8 +226,18 @@ draw(img::AbstractArray{T,2}, args...) where {T<:Colorant} = draw!(copy(img), ar
 Point(τ::Tuple{Int, Int}) = Point(τ...)
 Point(p::CartesianIndex) = Point(p[2], p[1])
 
-function draw!(img::AbstractArray{T,2}, point::Point, color::T) where T<:Colorant
-    drawifinbounds!(img, point, color)
+# Base.convert(::Type{Point}, t::Tuple{Int, Int}) = Point(t...)
+# Base.convert(::Type{Point}, p::CartesianIndex) = Point(p[2], p[1])
+
+draw!(img::AbstractArray{T,2}, p::Point, color::T = oneunit(T); in_bounds::Bool=false, thickness::Integer=-1) where {T<:Colorant} =
+    draw!(img, p.y, p.x, color, in_bounds=in_bounds, thickness=thickness)
+draw!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T = oneunit(T); in_bounds::Bool=false, thickness::Integer=-1) where {T<:Colorant} =
+    draw!(img, Point(p), color, in_bounds=in_bounds, thickness=thickness)
+
+function draw!(img::AbstractArray{T,2}, y::Integer, x::Integer, color::T; in_bounds::Bool=false, thickness::Integer=-1) where T<:Colorant
+    in_bounds ? img[point.y, point.x] = color : drawifinbounds!(img, y, x, color)
+    thickness != -1 && drawwiththickness!(img, y, x, color, in_bounds, thickness)
+    img
 end
 
 """
@@ -204,7 +254,7 @@ drawifinbounds!(img::AbstractArray{T,2}, p::Point, color::T = oneunit(T)) where 
 drawifinbounds!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T = oneunit(T)) where {T<:Colorant} = drawifinbounds!(img, Point(p), color)
 
 function drawifinbounds!(img::AbstractArray{T,2}, y::Int, x::Int, color::T) where {T<:Colorant}
-    if checkbounds(Bool, img, y, x) img[y, x] = color end
+    checkbounds(Bool, img, y, x) && (img[y, x] = color)
     img
 end
 
@@ -219,20 +269,20 @@ Thickness defaults to 1
 
 """
 
-drawwiththickness!(img::AbstractArray{T,2}, p::Point, color::T = oneunit(T), thickness::Int=1) where {T<:Colorant} = drawwiththickness!(img, p.y, p.x, color, thickness)
-drawwiththickness!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T = oneunit(T), thickness::Int=1) where {T<:Colorant} = drawifinbounds!(img, Point(p), color, thickness)
+drawwiththickness!(img::AbstractArray{T,2}, p::Point, color::T, in_bounds::Bool, thickness::Integer) where {T<:Colorant} = drawwiththickness!(img, p.y, p.x, color, in_bounds, thickness)
+drawwiththickness!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T, in_bounds::Bool, thickness::Integer) where {T<:Colorant} = drawifinbounds!(img, Point(p), color, in_bounds, thickness)
 
-function drawwiththickness!(img::AbstractArray{T,2}, y0::Int, x0::Int, color::T, thickness::Int) where {T<:Colorant}
+function drawwiththickness!(img::AbstractArray{T,2}, y0::Int, x0::Int, color::T, in_bounds::Bool, thickness::Int) where {T<:Colorant}
     n = Int(round(thickness / 2))
     evn = thickness % 2 == 1 ? 0 : 1
     pixels = [i for i = -(n-evn):n]
 
     for (x,y) in Combinatorics.combinations(pixels, 2)
-        drawifinbounds!(img, y0+y, x0+x, color)
-        drawifinbounds!(img, y0+y, x0-x, color)
-        drawifinbounds!(img, y0-y, x0+x, color)
-        drawifinbounds!(img, y0-y, x0-x, color)
+        draw!(img, y0+y, x0+x, color, in_bounds=in_bounds)
+        draw!(img, y0+y, x0-x, color, in_bounds=in_bounds)
+        draw!(img, y0-y, x0+x, color, in_bounds=in_bounds)
+        draw!(img, y0-y, x0-x, color, in_bounds=in_bounds)
     end
-    drawifinbounds!(img, y0, x0, color)
+    draw!(img, y0, x0, color, in_bounds=in_bounds)
     img
 end

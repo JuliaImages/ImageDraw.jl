@@ -4,7 +4,7 @@ Ellipse(x::Int, y::Int, ρx::T, ρy::U) where {T<:Real, U<:Real} = Ellipse(Point
 Ellipse(p::CartesianIndex{2}, ρx::T, ρy::U) where {T<:Real, U<:Real} = Ellipse(Point(p), ρx, ρy)
 Ellipse(circle::CirclePointRadius) = Ellipse(circle.center, circle.ρ, circle.ρ)
 
-function draw!(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T) where T<:Colorant
+function draw!(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T; in_bounds::Bool=false, thickness::Int=-1) where T<:Colorant
 	ys = Int[]
 	xs = Int[]
 	for i in ellipse.center.y : ellipse.center.y + ellipse.ρy
@@ -17,10 +17,10 @@ function draw!(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T) where T<:Co
 		end
 	end
 	for (yi, xi) in zip(ys, xs)
-		drawifinbounds!(img, yi, xi, color)
-		drawifinbounds!(img,2 * ellipse.center.y - yi, xi, color)
-		drawifinbounds!(img,yi, 2 * ellipse.center.x - xi, color)
-		drawifinbounds!(img, 2 * ellipse.center.y - yi, 2 * ellipse.center.x - xi, color)
+		draw!(img, yi, xi, color, in_bounds=in_bounds, thickness=thickness)
+		draw!(img,2 * ellipse.center.y - yi, xi, color, in_bounds=in_bounds, thickness=thickness)
+		draw!(img,yi, 2 * ellipse.center.x - xi, color, in_bounds=in_bounds, thickness=thickness)
+		draw!(img, 2 * ellipse.center.y - yi, 2 * ellipse.center.x - xi, color, in_bounds=in_bounds, thickness=thickness)
 	end
 	img
 end

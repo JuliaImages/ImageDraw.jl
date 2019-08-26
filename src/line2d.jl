@@ -15,13 +15,10 @@ end
 LineTwoPoints(x0::Int, y0::Int, x1::Int, y1::Int) = LineTwoPoints(Point(x0, y0), Point(x1,y1))
 LineTwoPoints(p1::CartesianIndex{2}, p2::CartesianIndex{2}) = LineTwoPoints(Point(p1), Point(p2))
 
-draw!(img::AbstractArray{T,2}, line::LineTwoPoints, method::Function = bresenham) where {T<:Colorant} =
-    draw!(img, line, oneunit(T), 1,  method)
+draw!(img::AbstractArray{T,2}, line::LineTwoPoints, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=-1) where {T<:Colorant} =
+    draw!(img, line, oneunit(T), method, in_bounds=in_bounds, thickness=thickness)
 
-draw!(img::AbstractArray{T,2}, line::LineTwoPoints, color::T, method::Function = bresenham) where {T<:Colorant} =
-    draw!(img, line, color, 1, method)
-
-function draw!(img::AbstractArray{T,2}, line::LineTwoPoints, color::T, thickness::Int, method::Function = bresenham) where T<:Colorant
+function draw!(img::AbstractArray{T,2}, line::LineTwoPoints, color::T, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=1) where T<:Colorant
     indsy, indsx = axes(img)
     x1 = line.p1.x; y1 = line.p1.y
     x2 = line.p2.x; y2 = line.p2.y
@@ -30,7 +27,7 @@ function draw!(img::AbstractArray{T,2}, line::LineTwoPoints, color::T, thickness
     intersections_y = [(x1 + (y-y1)/m, y) for y in (first(indsy), last(indsy))]
     valid_intersections = get_valid_intersections(vcat(intersections_x, intersections_y), indsx, indsy)
     if length(valid_intersections) > 0
-        method(img, round(Int,valid_intersections[1][2]), round(Int,valid_intersections[1][1]), round(Int,valid_intersections[2][2]), round(Int,valid_intersections[2][1]), color, thickness)
+        method(img, round(Int,valid_intersections[1][2]), round(Int,valid_intersections[1][1]), round(Int,valid_intersections[2][2]), round(Int,valid_intersections[2][1]), color, in_bounds=in_bounds, thickness=thickness)
     else
         img
     end
@@ -41,10 +38,10 @@ end
 
 LineNormal(τ::Tuple{T,U}) where {T<:Real, U<:Real} = LineNormal(τ...)
 
-draw!(img::AbstractArray{T,2}, line::LineNormal, method::Function = bresenham) where {T<:Colorant} =
-    draw!(img, line, oneunit(T), 1, method)
+draw!(img::AbstractArray{T,2}, line::LineNormal, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=-1) where {T<:Colorant} =
+    draw!(img, line, oneunit(T), method, in_bounds=in_bounds, thickness=thickness)
 
-function draw!(img::AbstractArray{T, 2}, line::LineNormal, color::T, thickness::Int=1, method::Function = bresenham) where T<:Colorant
+function draw!(img::AbstractArray{T, 2}, line::LineNormal, color::T, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=-1) where T<:Colorant
     indsy, indsx = axes(img)
     cosθ = cos(line.θ)
     sinθ = sin(line.θ)
@@ -52,7 +49,7 @@ function draw!(img::AbstractArray{T, 2}, line::LineNormal, color::T, thickness::
     intersections_y = [((line.ρ - y*sinθ)/cosθ, y) for y in (first(indsy), last(indsy))]
     valid_intersections = get_valid_intersections(vcat(intersections_x, intersections_y), indsx, indsy)
     if length(valid_intersections) > 0
-        method(img, round(Int,valid_intersections[1][2]), round(Int,valid_intersections[1][1]), round(Int,valid_intersections[2][2]), round(Int,valid_intersections[2][1]), color, thickness)
+        method(img, round(Int,valid_intersections[1][2]), round(Int,valid_intersections[1][1]), round(Int,valid_intersections[2][2]), round(Int,valid_intersections[2][1]), color, in_bounds=in_bounds, thickness=thickness)
     else
         img
     end
@@ -63,17 +60,14 @@ end
 LineSegment(x0::Int, y0::Int, x1::Int, y1::Int) = LineSegment(Point(x0, y0), Point(x1,y1))
 LineSegment(p1::CartesianIndex, p2::CartesianIndex) = LineSegment(Point(p1), Point(p2))
 
-draw!(img::AbstractArray{T,2}, line::LineSegment, method::Function = bresenham) where {T<:Colorant} =
-    draw!(img, line, oneunit(T), 1, method)
+draw!(img::AbstractArray{T,2}, line::LineSegment, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=-1) where {T<:Colorant} =
+    draw!(img, line, oneunit(T), method, in_bounds=in_bounds, thickness=thickness)
 
-draw!(img::AbstractArray{T,2}, line::LineSegment, color::T, method::Function = bresenham) where {T<:Colorant} =
-    draw!(img, line, color, 1, method)
-
-draw!(img::AbstractArray{T,2}, line::LineSegment, color::T, thickness::Int, method::Function = bresenham) where {T<:Colorant} =
-    method(img, line.p1.y, line.p1.x, line.p2.y, line.p2.x, color, thickness)
+draw!(img::AbstractArray{T,2}, line::LineSegment, color::T, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=-1) where {T<:Colorant} =
+    method(img, line.p1.y, line.p1.x, line.p2.y, line.p2.x, color, in_bounds=in_bounds, thickness=thickness)
 
 # Methods to draw lines
-function bresenham(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T, thickness::Int=1) where T<:Colorant
+function bresenham(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T; in_bounds::Bool=false, thickness::Integer=-1) where T<:Colorant
     dx = abs(x1 - x0)
     dy = abs(y1 - y0)
 
@@ -83,7 +77,7 @@ function bresenham(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int,
     err = (dx > dy ? dx : -dy) / 2
 
     while true
-        drawwiththickness!(img, y0, x0, color, thickness)
+        draw!(img, y0, x0, color, in_bounds=in_bounds, thickness=thickness)
         (x0 != x1 || y0 != y1) || break
         e2 = err
         if e2 > -dx
@@ -107,7 +101,7 @@ function swap(x, y)
     y, x
 end
 
-function xiaolin_wu(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T, thickness::Int=1) where T<:Gray
+function xiaolin_wu(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T; in_bounds::Bool=false, thickness::Integer=-1) where T<:Gray
     dx = x1 - x0
     dy = y1 - y0
 
@@ -130,9 +124,9 @@ function xiaolin_wu(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int
     xpxl0 = xend
     ypxl0 = trunc(Int, yend)
     index = swapped ? CartesianIndex(xpxl0, ypxl0) : CartesianIndex(ypxl0, xpxl0)
-    drawifinbounds!(img, index, T(rfpart(yend) * xgap))
+    draw!(img, index, T(rfpart(yend) * xgap), in_bounds=in_bounds, thickness=thickness)
     index = swapped ? CartesianIndex(xpxl0, ypxl0 + 1) : CartesianIndex(ypxl0 + 1, xpxl0)
-    drawifinbounds!(img, index, T(fpart(yend) * xgap))
+    draw!(img, index, T(fpart(yend) * xgap), in_bounds=in_bounds, thickness=thickness)
     intery = yend + gradient
 
     xend = round(Int, x1)
@@ -141,15 +135,15 @@ function xiaolin_wu(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int
     xpxl1 = xend
     ypxl1 = trunc(Int, yend)
     index = swapped ? CartesianIndex(xpxl1, ypxl1) : CartesianIndex(ypxl1, xpxl1)
-    drawifinbounds!(img, index, T(rfpart(yend) * xgap))
+    draw!(img, index, T(rfpart(yend) * xgap), in_bounds=in_bounds, thickness=thickness)
     index = swapped ? CartesianIndex(xpxl1, ypxl1 + 1) : CartesianIndex(ypxl1 + 1, xpxl1)
-    drawifinbounds!(img, index, T(fpart(yend) * xgap))
+    draw!(img, index, T(fpart(yend) * xgap), in_bounds=in_bounds, thickness=thickness)
 
     for i in (xpxl0 + 1):(xpxl1 - 1)
         index = swapped ? CartesianIndex(i, trunc(Int, intery)) : CartesianIndex(trunc(Int, intery), i)
-        drawifinbounds!(img, index, T(rfpart(intery)))
+        draw!(img, index, T(rfpart(intery)), in_bounds=in_bounds, thickness=thickness)
         index = swapped ? CartesianIndex(i, trunc(Int, intery) + 1) : CartesianIndex(trunc(Int, intery) + 1, i)
-        drawifinbounds!(img, index, T(fpart(intery)))
+        draw!(img, index, T(fpart(intery)), in_bounds=in_bounds, thickness=thickness)
         intery += gradient
     end
     img
