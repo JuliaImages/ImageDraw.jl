@@ -188,7 +188,8 @@ end
 Draws `drawable` on `img` using color `color` which
 defaults to `oneunit(eltype(img))`
 """
-draw!(img::AbstractArray{T,2}, object::Drawable) where {T<:Colorant} = draw!(img, object, oneunit(T))
+draw!(img::AbstractArray{T,2}, object::Drawable; in_bounds::Bool=false, thickness::Integer=-1) where {T<:Colorant} =
+    draw!(img, object, oneunit(T), in_bounds=in_bounds, thickness=thickness)
 
 
 """
@@ -201,12 +202,13 @@ corresponding colors from `[color]` which defaults to `oneunit(eltype(img))`
 If only a single color `color` is specified then all objects will be
 colored with that color.
 """
-function draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, colors::AbstractVector{V}) where {T<:Colorant, U<:Drawable, V<:Colorant}
+function draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, colors::AbstractVector{V}; in_bounds::AbstractVector{Bool}=[false], thickness::AbstractVector{<:Integer}=[-1]) where {T<:Colorant, U<:Drawable, V<:Colorant}
     colors = copy(colors)
-    while length(colors) < length(objects)
-        push!(colors, oneunit(T))
-    end
-    foreach((object, color) -> draw!(img, object, color), objects, colors)
+    while length(colors) < length(objects) push!(colors, oneunit(T)) end
+    while length(in_bounds) < length(objects) push!(in_bounds, false) end
+    while length(thickness) < length(objects) push!(thickness, -1) end
+
+    foreach((object, color, in_b, thick) -> draw!(img, object, color), objects, colors, in_bounds, thickness)
     img
 end
 
