@@ -4,7 +4,7 @@ Ellipse(x::Int, y::Int, ρx::T, ρy::U) where {T<:Real, U<:Real} = Ellipse(Point
 Ellipse(p::CartesianIndex{2}, ρx::T, ρy::U) where {T<:Real, U<:Real} = Ellipse(Point(p), ρx, ρy)
 Ellipse(circle::CirclePointRadius) = Ellipse(circle.center, circle.ρ, circle.ρ)
 
-function draw!(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T; in_bounds::Bool=false, thickness::Int=-1) where T<:Colorant
+function draw!(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where T<:Colorant
 	ys = Int[]
 	xs = Int[]
 	for i in ellipse.center.y : ellipse.center.y + ellipse.ρy

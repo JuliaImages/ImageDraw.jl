@@ -15,10 +15,10 @@ end
 LineTwoPoints(x0::Int, y0::Int, x1::Int, y1::Int) = LineTwoPoints(Point(x0, y0), Point(x1,y1))
 LineTwoPoints(p1::CartesianIndex{2}, p2::CartesianIndex{2}) = LineTwoPoints(Point(p1), Point(p2))
 
-draw!(img::AbstractArray{T,2}, line::LineTwoPoints, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=-1) where {T<:Colorant} =
+draw!(img::AbstractArray{T,2}, line::LineTwoPoints, method::Function = bresenham; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where {T<:Colorant} =
     draw!(img, line, oneunit(T), method, in_bounds=in_bounds, thickness=thickness)
 
-function draw!(img::AbstractArray{T,2}, line::LineTwoPoints, color::T, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=1) where T<:Colorant
+function draw!(img::AbstractArray{T,2}, line::LineTwoPoints, color::T, method::Function = bresenham; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where T<:Colorant
     indsy, indsx = axes(img)
     x1 = line.p1.x; y1 = line.p1.y
     x2 = line.p2.x; y2 = line.p2.y
@@ -38,10 +38,10 @@ end
 
 LineNormal(τ::Tuple{T,U}) where {T<:Real, U<:Real} = LineNormal(τ...)
 
-draw!(img::AbstractArray{T,2}, line::LineNormal, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=-1) where {T<:Colorant} =
+draw!(img::AbstractArray{T,2}, line::LineNormal, method::Function = bresenham; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where {T<:Colorant} =
     draw!(img, line, oneunit(T), method, in_bounds=in_bounds, thickness=thickness)
 
-function draw!(img::AbstractArray{T, 2}, line::LineNormal, color::T, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=-1) where T<:Colorant
+function draw!(img::AbstractArray{T, 2}, line::LineNormal, color::T, method::Function = bresenham; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where T<:Colorant
     indsy, indsx = axes(img)
     cosθ = cos(line.θ)
     sinθ = sin(line.θ)
@@ -60,14 +60,14 @@ end
 LineSegment(x0::Int, y0::Int, x1::Int, y1::Int) = LineSegment(Point(x0, y0), Point(x1,y1))
 LineSegment(p1::CartesianIndex, p2::CartesianIndex) = LineSegment(Point(p1), Point(p2))
 
-draw!(img::AbstractArray{T,2}, line::LineSegment, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=-1) where {T<:Colorant} =
+draw!(img::AbstractArray{T,2}, line::LineSegment, method::Function = bresenham; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where {T<:Colorant} =
     draw!(img, line, oneunit(T), method, in_bounds=in_bounds, thickness=thickness)
 
-draw!(img::AbstractArray{T,2}, line::LineSegment, color::T, method::Function = bresenham; in_bounds::Bool=false, thickness::Integer=-1) where {T<:Colorant} =
+draw!(img::AbstractArray{T,2}, line::LineSegment, color::T, method::Function = bresenham; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where {T<:Colorant} =
     method(img, line.p1.y, line.p1.x, line.p2.y, line.p2.x, color, in_bounds=in_bounds, thickness=thickness)
 
 # Methods to draw lines
-function bresenham(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T; in_bounds::Bool=false, thickness::Integer=-1) where T<:Colorant
+function bresenham(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where T<:Colorant
     dx = abs(x1 - x0)
     dy = abs(y1 - y0)
 
@@ -101,7 +101,7 @@ function swap(x, y)
     y, x
 end
 
-function xiaolin_wu(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T; in_bounds::Bool=false, thickness::Integer=-1) where T<:Gray
+function xiaolin_wu(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where T<:Gray
     dx = x1 - x0
     dy = y1 - y0
 
