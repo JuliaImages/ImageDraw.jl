@@ -211,7 +211,7 @@ end
 Draws objects with given colors, in_bounds flags, and thickness flags.
 Length of objects, colors, in_bounds flags, thickness flags, all need to be of equal length
 """
-function draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, colors::AbstractVector{V}; in_bounds::AbstractVector{Bool}=[false], thickness::AbstractVector{<:Union{Integer, Nothing}}=[nothing]) where {T<:Colorant, U<:Drawable, V<:Colorant}
+function draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, colors::AbstractVector{V}; in_bounds::AbstractVector{Bool}=zeros(Bool, length(objects)), thickness::AbstractVector{<:Union{Integer, Nothing}}=Vector{Nothing}(undef, length(objects))) where {T<:Colorant, U<:Drawable, V<:Colorant}
     length(colors) == length(objects) || throw("The number of colors and objects should be equal.")
     length(in_bounds) == length(objects) || throw("The number of in_bounds vars and objects should be equal")
     length(thickness) == length(objects) || throw("The number of thicknesses and objects should be equal")
