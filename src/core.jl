@@ -211,11 +211,12 @@ end
 Draws objects with given colors, in_bounds flags, and thickness flags.
 Length of objects, colors, in_bounds flags, thickness flags, all need to be of equal length
 """
-function draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, colors::AbstractVector{V}; in_bounds::AbstractVector{Bool}=zeros(Bool, length(objects)), thickness::AbstractVector{<:Union{Integer, Nothing}}=Vector{Nothing}(undef, length(objects))) where {T<:Colorant, U<:Drawable, V<:Colorant}
+function draw!(img::AbstractArray{T,2}, objects::AbstractVector{U}, colors::AbstractVector{V}; in_bounds::Union{AbstractVector{Bool},Nothing}=nothing, thickness::Union{AbstractVector{<:Union{Integer, Nothing}},Nothing}=nothing) where {T<:Colorant, U<:Drawable, V<:Colorant}
     length(colors) == length(objects) || throw("The number of colors and objects should be equal.")
-    length(in_bounds) == length(objects) || throw("The number of in_bounds vars and objects should be equal")
-    length(thickness) == length(objects) || throw("The number of thicknesses and objects should be equal")
-    foreach((object, color, in_b, thick) -> draw!(img, object, color, in_bounds=in_b, thickness=thick), objects, colors, in_bounds, thickness)
+    isnothing(in_bounds) || length(in_bounds) == length(objects) || throw("The number of in_bounds vars and objects should be equal")
+    isnothing(thickness) || length(thickness) == length(objects) || throw("The number of thicknesses and objects should be equal")
+    isnothing(in_bounds) && isnothing(thickness) ? foreach((object, color) -> draw!(img, object, color), objects, colors) :
+                                                   foreach((object, color, in_b, thick) -> draw!(img, object, color, in_bounds=in_b, thickness=thick), objects, colors, in_bounds, thickness)
     img
 end
 
@@ -230,6 +231,8 @@ as a `AbstractVector{Drawable}` with corresponding colors in `[color]`
 """
 draw(img::AbstractArray{T,2}, args...; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where {T<:Colorant} =
     draw!(copy(img), args...; in_bounds=in_bounds, thickness=thickness)
+
+draw(img::AbstractArray{T,2}, args...) where {T<:Colorant} = draw!(copy(img), args...)
 
 Point(τ::Tuple{Int, Int}) = Point(τ...)
 Point(p::CartesianIndex) = Point(p[2], p[1])
