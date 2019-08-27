@@ -37,4 +37,19 @@ using LinearAlgebra
     @inferred draw!(img, point)
     expected = zeros(Gray{N0f8})
     @test all(img .== expected) == true
+
+    @testset "Thickness" begin
+        point = Point(2,2)
+        img = zeros(Gray{N0f8}, 3, 3)
+        @inferred draw!(img, point, thickness=2)
+        img[2:end,2:end] .= 1
+        expected = img
+        @test all(img .== expected) == true
+
+        point = Point(2,2)
+        img = zeros(Gray{N0f8}, 3, 3)
+        @inferred draw!(img, point, thickness=3)
+        expected = img .= 1
+        @test all(img .== expected) == true
+    end
 end

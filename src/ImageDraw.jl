@@ -10,6 +10,10 @@ include("circle2d.jl")
 include("paths.jl")
 include("cross.jl")
 
+if v"1.0" <= VERSION < v"1.1"
+    isnothing(x) = x===nothing
+end
+
 #export methods
 export
 	draw,

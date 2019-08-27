@@ -228,7 +228,8 @@ Draws the `drawable` object on a copy of image `img` using color
 `color`. Can also draw multiple `Drawable` objects when passed
 as a `AbstractVector{Drawable}` with corresponding colors in `[color]`
 """
-draw(img::AbstractArray{T,2}, args...) where {T<:Colorant} = draw!(copy(img), args...)
+draw(img::AbstractArray{T,2}, args...; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where {T<:Colorant} =
+    draw!(copy(img), args...; in_bounds=in_bounds, thickness=thickness)
 
 Point(τ::Tuple{Int, Int}) = Point(τ...)
 Point(p::CartesianIndex) = Point(p[2], p[1])
@@ -241,7 +242,7 @@ draw!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T = oneunit(T); in_b
 
 function draw!(img::AbstractArray{T,2}, y::Integer, x::Integer, color::T; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where T<:Colorant
     in_bounds ? img[point.y, point.x] = color : drawifinbounds!(img, y, x, color)
-    isnothing(thickness) || drawwiththickness!(img, y, x, color, in_bounds, thickness)
+    (isnothing(thickness) && thickness != 1) || drawwiththickness!(img, y, x, color, in_bounds, thickness)
     img
 end
 
@@ -278,15 +279,12 @@ drawwiththickness!(img::AbstractArray{T,2}, p::Point, color::T, in_bounds::Bool,
 drawwiththickness!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T, in_bounds::Bool, thickness::Integer) where {T<:Colorant} = drawifinbounds!(img, Point(p), color, in_bounds, thickness)
 
 function drawwiththickness!(img::AbstractArray{T,2}, y0::Int, x0::Int, color::T, in_bounds::Bool, thickness::Int) where {T<:Colorant}
-    n = Int(round(thickness / 2))
-    evn = thickness % 2 == 1 ? 0 : 1
-    pixels = [i for i = -(n-evn):n]
+    m = ceil(Int, thickness/2) - 1
+    n = thickness % 2 == 0 ? m+1 : m
+    pixels = [i for i = -m:n]
 
-    for (x,y) in Combinatorics.combinations(pixels, 2)
+    for x in pixels, y in pixels
         draw!(img, y0+y, x0+x, color, in_bounds=in_bounds)
-        draw!(img, y0+y, x0-x, color, in_bounds=in_bounds)
-        draw!(img, y0-y, x0+x, color, in_bounds=in_bounds)
-        draw!(img, y0-y, x0-x, color, in_bounds=in_bounds)
     end
     draw!(img, y0, x0, color, in_bounds=in_bounds)
     img
