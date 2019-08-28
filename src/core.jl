@@ -17,39 +17,11 @@ end
 abstract type AbstractPath <: Drawable end
 abstract type AbstractLine <: Drawable end
 abstract type AbstractShape <: Drawable end
-abstract type AbstractBackground <: Drawable end
 
 
 abstract type AbstractPolygon <: AbstractShape end
 abstract type AbstractEllipse <: AbstractShape end
 abstract type AbstractCircle <: AbstractEllipse end
-
-"""
-    background = SolidBackground(color)
-
-A `Drawable` background that will fill the 'background' of an image with
-the set color
-"""
-
-struct SolidBackground{T<:Colorant} <: AbstractBackground
-    color::T
-end
-
-"""
-    background = StripedBackground(color)
-
-A `Drawable` background that will fill the 'background' of an image with
-the given colors at the intervals given at the given angle
-"""
-
-struct StripedBackground{T<:Colorant,  U<:Real, V<:Real} <: AbstractBackground
-    colors::Vector{T}
-    distances::Vector{U}
-    θ::V
-end
-
-
-struct NoisyBackground <: AbstractBackground end
 
 
 """
@@ -244,8 +216,11 @@ draw!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T = oneunit(T); in_b
     draw!(img, Point(p), color, in_bounds=in_bounds, thickness=thickness)
 
 function draw!(img::AbstractArray{T,2}, y::Integer, x::Integer, color::T; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where T<:Colorant
-    in_bounds ? img[point.y, point.x] = color : drawifinbounds!(img, y, x, color)
-    (isnothing(thickness) && thickness != 1) || drawwiththickness!(img, y, x, color, in_bounds, thickness)
+    if !isnothing(thickness)
+        drawwiththickness!(img, y, x, color, in_bounds, thickness) # recursively call drawifinbounds!
+    else
+        in_bounds ? img[y, x] = color : drawifinbounds!(img, y, x, color)
+    end
     img
 end
 
@@ -281,14 +256,17 @@ Thickness defaults to 1
 drawwiththickness!(img::AbstractArray{T,2}, p::Point, color::T, in_bounds::Bool, thickness::Integer) where {T<:Colorant} = drawwiththickness!(img, p.y, p.x, color, in_bounds, thickness)
 drawwiththickness!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T, in_bounds::Bool, thickness::Integer) where {T<:Colorant} = drawifinbounds!(img, Point(p), color, in_bounds, thickness)
 
-function drawwiththickness!(img::AbstractArray{T,2}, y0::Int, x0::Int, color::T, in_bounds::Bool, thickness::Int) where {T<:Colorant}
-    m = ceil(Int, thickness/2) - 1
-    n = thickness % 2 == 0 ? m+1 : m
-    pixels = [i for i = -m:n]
+function drawwiththickness!(img::AbstractArray{T,2}, y0::Int, x0::Int, color::T, in_bounds::Bool, thickness::Integer) where {T<:Colorant}
+    if thickness == 1
+        draw!(img, y0, x0, color, in_bounds=in_bounds, thickness=nothing)
+    else
+        m = ceil(Int, thickness/2) - 1
+        n = thickness % 2 == 0 ? m+1 : m
+        pixels = [i for i = -m:n]
 
-    for x in pixels, y in pixels
-        draw!(img, y0+y, x0+x, color, in_bounds=in_bounds)
+        for x in pixels, y in pixels
+            draw!(img, y0+y, x0+x, color, in_bounds=in_bounds)
+        end
     end
-    draw!(img, y0, x0, color, in_bounds=in_bounds)
     img
 end

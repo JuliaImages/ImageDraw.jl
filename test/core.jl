@@ -38,18 +38,30 @@ using LinearAlgebra
     expected = zeros(Gray{N0f8})
     @test all(img .== expected) == true
 
+    img = zeros(Gray{N0f8},5,5)
+    invalid_points = [(6,1), (4,4), (1,7), (7,6)]
+    @test_throws BoundsError draw!(img, Path(invalid_points), in_bounds=true)
+
     @testset "Thickness" begin
         point = Point(2,2)
         img = zeros(Gray{N0f8}, 3, 3)
         @inferred draw!(img, point, thickness=2)
-        img[2:end,2:end] .= 1
-        expected = img
+        expected = copy(img)
+        expected[2:end,2:end] .= 1
         @test all(img .== expected) == true
 
         point = Point(2,2)
         img = zeros(Gray{N0f8}, 3, 3)
         @inferred draw!(img, point, thickness=3)
-        expected = img .= 1
+        expected = copy(img)
+        expected .= 1
+        @test all(img .== expected) == true
+
+        point = CartesianIndex(2,2)
+        img = zeros(Gray{N0f8}, 3, 3)
+        @inferred draw!(img, point, thickness=3)
+        expected = copy(img)
+        expected .= 1
         @test all(img .== expected) == true
     end
 end
