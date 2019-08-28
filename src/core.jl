@@ -257,16 +257,12 @@ drawwiththickness!(img::AbstractArray{T,2}, p::Point, color::T, in_bounds::Bool,
 drawwiththickness!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T, in_bounds::Bool, thickness::Integer) where {T<:Colorant} = drawifinbounds!(img, Point(p), color, in_bounds, thickness)
 
 function drawwiththickness!(img::AbstractArray{T,2}, y0::Int, x0::Int, color::T, in_bounds::Bool, thickness::Integer) where {T<:Colorant}
-    if thickness == 1
-        draw!(img, y0, x0, color, in_bounds=in_bounds, thickness=nothing)
-    else
-        m = ceil(Int, thickness/2) - 1
-        n = thickness % 2 == 0 ? m+1 : m
-        pixels = [i for i = -m:n]
+    m = ceil(Int, thickness/2) - 1
+    n = thickness % 2 == 0 ? m+1 : m
+    pixels = [i for i = -m:n]
 
-        for x in pixels, y in pixels
-            draw!(img, y0+y, x0+x, color, in_bounds=in_bounds)
-        end
+    for x in pixels, y in pixels
+        draw!(img, y0+y, x0+x, color, in_bounds=in_bounds)
     end
     img
 end
