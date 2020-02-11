@@ -1,22 +1,14 @@
+# Until https://github.com/julia-actions/julia-uploadcodecov/issues/1 get fixed
+# submit coverage report via travis
 language: julia
 os:
     - linux
-    - osx
 julia:
     - 1.0
-    - 1.1
-    - nightly
-matrix:
-    allow_failures:
-        - julia: nightly
 notifications:
     email: false
 
 # use default travis script
 
 after_success:
-    - if [ $TRAVIS_OS_NAME = "linux" ]; then
-         julia -e 'cd(Pkg.dir("ImageDraw")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
-      fi
-#   - julia -e 'Pkg.clone("https://github.com/MichaelHatherly/Documenter.jl")'
-#   - julia -e 'cd(Pkg.dir("ImageDraw")); include(joinpath("docs", "make.jl"))'
+    - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
