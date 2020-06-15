@@ -5,7 +5,8 @@ import LinearAlgebra: det
 CirclePointRadius(x::Int, y::Int, ρ::T) where {T<:Real} = CirclePointRadius(Point(x,y), ρ)
 CirclePointRadius(p::CartesianIndex{2}, ρ::T) where {T<:Real} = CirclePointRadius(Point(p), ρ)
 
-draw!(img::AbstractArray{T, 2}, circle::CirclePointRadius, color::T) where {T<:Colorant} = draw!(img, Ellipse(circle), color)
+draw!(img::AbstractArray{T, 2}, circle::CirclePointRadius, color::T; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where {T<:Colorant} =
+    draw!(img, Ellipse(circle), color, in_bounds=in_bounds, thickness=thickness)
 
 #CircleThreePoints methods
 
@@ -14,7 +15,7 @@ CircleThreePoints(x1::Int, y1::Int, x2::Int, y2::Int, x3::Int, y3::Int) =
 CircleThreePoints(p1::CartesianIndex{2}, p2::CartesianIndex{2}, p3::CartesianIndex{2}) =
     CircleThreePoints(Point(p1), Point(p2), Point(p3))
 
-function draw!(img::AbstractArray{T, 2}, circle::CircleThreePoints, color::T) where T<:Colorant
+function draw!(img::AbstractArray{T, 2}, circle::CircleThreePoints, color::T; in_bounds::Bool=false, thickness::Union{Integer, Nothing}=nothing) where T<:Colorant
     ind = axes(img)
     x1 = circle.p1.x; y1 = circle.p1.y
     x2 = circle.p2.x; y2 = circle.p2.y
@@ -25,5 +26,5 @@ function draw!(img::AbstractArray{T, 2}, circle::CircleThreePoints, color::T) wh
     ρ = euclidean([x1, y1], R)
     (first(ind[2]) <= R[1] <= last(ind[2]) && first(ind[1]) <= R[2] <= last(ind[1])) || error("Center of circle is out of the bounds of image")
     ρ - 1 <= minimum(abs, [R[1] - first(ind[2]), R[1] - last(ind[2]), R[2] - first(ind[1]), R[2] - last(ind[1])]) || error("Circle is out of the bounds of image : Radius is too large")
-    draw!(img, CirclePointRadius(Point(round(Int,R[1]), round(Int,R[2])), ρ), color)
+    draw!(img, CirclePointRadius(Point(round(Int,R[1]), round(Int,R[2])), ρ), color, in_bounds=in_bounds, thickness=thickness)
 end

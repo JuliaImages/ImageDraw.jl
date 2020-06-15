@@ -1,7 +1,7 @@
 module ImageDraw
 
 # package code goes here
-using ImageCore, Distances
+using ImageCore, Distances, Combinatorics
 
 include("core.jl")
 include("line2d.jl")
@@ -9,6 +9,10 @@ include("ellipse2d.jl")
 include("circle2d.jl")
 include("paths.jl")
 include("cross.jl")
+
+if v"1.0" <= VERSION < v"1.1"
+    isnothing(x) = x===nothing
+end
 
 #export methods
 export

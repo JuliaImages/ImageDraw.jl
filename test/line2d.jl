@@ -28,6 +28,18 @@
 		expected[diagind(expected)] .= RGB{N0f8}(0.2, 0.3, 0.4)
 		res = @inferred draw(img2, LineSegment(1,1,10,10), RGB{N0f8}(0.2,0.3,0.4))
 		@test expected == res
+
+	end
+
+	@testset "Thickness" begin
+		img = zeros(Gray{N0f8}, 5, 5)
+		expected = Gray{N0f8}.([1 1 0 0 0
+					1 1 1 0 0
+					0 1 1 1 0
+					0 0 1 1 1
+					0 0 0 1 1])
+		res = @inferred draw(img, LineSegment(1,1,5,5), thickness=2)
+		@test expected == res
 	end
 
 	@testset "Bresenham" begin
