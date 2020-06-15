@@ -14,8 +14,39 @@ struct Point <: Drawable
     y::Int
 end
 
-abstract type Line <: Drawable end
-abstract type Circle <: Drawable end
+abstract type AbstractPath <: Drawable end
+abstract type AbstractLine <: Drawable end
+abstract type AbstractShape <: Drawable end
+abstract type AbstractBackground <: Drawable end
+
+
+abstract type AbstractPolygon <: AbstractShape end
+abstract type AbstractEllipse <: AbstractShape end
+abstract type AbstractCircle <: AbstractEllipse end
+
+"""
+    background = SolidBackground(color)
+
+A `Drawable` background that will fill the 'background' of an image with
+the set color
+"""
+
+struct SolidBackground{T<:Colorant} <: AbstractBackground
+    color::T
+end
+
+"""
+    background = StripedBackground(color)
+
+A `Drawable` background that will fill the 'background' of an image with
+the given colors at the intervals given at the given angle
+"""
+
+struct StripedBackground{T<:Colorant,  U<:Real, V<:Real} <: AbstractBackground
+    colors::Vector{T}
+    distances::Vector{U}
+    θ::V
+end
 
 
 """
@@ -24,7 +55,7 @@ abstract type Circle <: Drawable end
 A `Drawable` infinite length line passing through the two points
 `p1` and `p2`.
 """
-struct LineTwoPoints <: Line
+struct LineTwoPoints <: AbstractLine
     p1::Point
     p2::Point
 end
@@ -36,7 +67,7 @@ A `Drawable` infinte length line having perpendicular length `ρ` from
 origin and angle `θ` between the perpendicular and x-axis
 
 """
-struct LineNormal{T<:Real, U<:Real} <: Line
+struct LineNormal{T<:Real, U<:Real} <: AbstractLine
     ρ::T
     θ::U
 end
@@ -46,7 +77,7 @@ end
 
 A `Drawable` circle passing through points `p1`, `p2` and `p3`
 """
-struct CircleThreePoints <: Circle
+struct CircleThreePoints <: AbstractCircle
     p1::Point
     p2::Point
     p3::Point
@@ -57,7 +88,7 @@ end
 
 A `Drawable` circle having center `center` and radius `ρ`
 """
-struct CirclePointRadius{T<:Real} <: Circle
+struct CirclePointRadius{T<:Real} <: AbstractCircle
     center::Point
     ρ::T
 end
@@ -67,7 +98,7 @@ end
 
 A `Drawable` finite length line between `p1` and `p2`
 """
-struct LineSegment <: Drawable
+struct LineSegment <: AbstractLine
     p1::Point
     p2::Point
 end
@@ -80,7 +111,7 @@ of points in `[point]`.
 !!! note
     This will create a non-closed path. For a closed path, see `Polygon`
 """
-struct Path <: Drawable
+struct Path <: AbstractPath
     vertices::Vector{Point}
 end
 
@@ -90,7 +121,7 @@ end
 A `Drawable` ellipse with center `center` and parameters `ρx` and `ρy`
 
 """
-struct Ellipse{T<:Real, U<:Real} <: Drawable
+struct Ellipse{T<:Real, U<:Real} <: AbstractEllipse
     center::Point
     ρx::T
     ρy::U
@@ -104,7 +135,7 @@ consecutive points in `[vertex]` along with the first and last point.
 !!! note
     This will create a closed path. For a non-closed path, see `Path`
 """
-struct Polygon <: Drawable
+struct Polygon <: AbstractPolygon
     vertices::Vector{Point}
 end
 
@@ -120,7 +151,7 @@ A `Drawable` regular polygon.
 * `θ::Real` : orientation of the polygon w.r.t x-axis (in radians)
 
 """
-struct RegularPolygon{T<:Real, U<:Real} <: Drawable
+struct RegularPolygon{T<:Real, U<:Real} <: AbstractPolygon
     center::Point
     side_count::Int
     side_length::T
@@ -131,7 +162,7 @@ end
     cross = Cross(c, range::UnitRange{Int})
 A `Drawable` cross passing through the point `c` with arms ranging across `range`.
 """
-struct Cross <: Drawable
+struct Cross <: AbstractPath
     c::Point
     range::UnitRange{Int}
 end
@@ -186,10 +217,9 @@ function draw!(img::AbstractArray{T,2}, point::Point, color::T) where T<:Coloran
 end
 
 """
-
     img_new = drawifinbounds!(img, y, x, color)
-    img_new = drawifinbounds!(img, Point, color)
-    img_new = drawifinbounds!(img, CartesianIndex, color)
+    img_new = drawifinbounds!(img, point, color)
+    img_new = drawifinbounds!(img, cartesianIndex, color)
 
 Draws a single point after checkbounds() for coordinate in the image.
 Color Defaults to oneunit(T)
@@ -201,5 +231,34 @@ drawifinbounds!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T = oneuni
 
 function drawifinbounds!(img::AbstractArray{T,2}, y::Int, x::Int, color::T) where {T<:Colorant}
     if checkbounds(Bool, img, y, x) img[y, x] = color end
+    img
+end
+
+"""
+    img_new = drawwiththickness!(img, y, x, color, thickness)
+    img_new = drawwiththickness!(img, point, color, thickness)
+    img_new = drawwiththickness!(img, cartesianIndex, color, thickness)
+
+Draws pixel with given thickness
+Color Defaults to oneunit(T)
+Thickness defaults to 1
+
+"""
+
+drawwiththickness!(img::AbstractArray{T,2}, p::Point, color::T = oneunit(T), thickness::Int=1) where {T<:Colorant} = drawwiththickness!(img, p.y, p.x, color, thickness)
+drawwiththickness!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T = oneunit(T), thickness::Int=1) where {T<:Colorant} = drawifinbounds!(img, Point(p), color, thickness)
+
+function drawwiththickness!(img::AbstractArray{T,2}, y0::Int, x0::Int, color::T, thickness::Int) where {T<:Colorant}
+    n = Int(round(thickness / 2))
+    evn = thickness % 2 == 1 ? 0 : 1
+    pixels = [i for i = -(n-evn):n]
+
+    for (x,y) in Combinatorics.combinations(pixels, 2)
+        drawifinbounds!(img, y0+y, x0+x, color)
+        drawifinbounds!(img, y0+y, x0-x, color)
+        drawifinbounds!(img, y0-y, x0+x, color)
+        drawifinbounds!(img, y0-y, x0-x, color)
+    end
+    drawifinbounds!(img, y0, x0, color)
     img
 end

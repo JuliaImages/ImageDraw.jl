@@ -1,7 +1,7 @@
 module ImageDraw
 
 # package code goes here
-using ImageCore, Distances
+using ImageCore, Distances, Combinatorics
 
 include("core.jl")
 include("line2d.jl")
@@ -9,11 +9,13 @@ include("ellipse2d.jl")
 include("circle2d.jl")
 include("paths.jl")
 include("cross.jl")
+include("background.jl")
 
 #export methods
 export
 	draw,
 	draw!,
+	generatecanvas,
 	bresenham,
 	xiaolin_wu
 
@@ -21,6 +23,10 @@ export
 export
 	#Drawable
 	Drawable,
+
+	#backgrounds
+	SolidBackground,
+	StripedBackground,
 
 	#Point
 	Point,
