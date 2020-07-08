@@ -1,0 +1,6 @@
+[deps]
+ColorVectorSpace = "c3611d14-8923-5661-9e6a-0046d554d3a4"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+ImageCore = "a09fc81d-aa75-5fe9-8630-4744c3626534"
+TestImages = "5e47fb64-e119-507b-a336-dd2b206d9990"
