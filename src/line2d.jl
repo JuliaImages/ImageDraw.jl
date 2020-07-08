@@ -67,8 +67,12 @@ draw!(img::AbstractArray{T,2}, line::LineSegment, method::Function = bresenham) 
 draw!(img::AbstractArray{T,2}, line::LineSegment, color::T, method::Function = bresenham) where {T<:Colorant} =
     method(img, line.p1.y, line.p1.x, line.p2.y, line.p2.x, color)
 
-# Methods to draw lines
+"""
+    res = bresenham(img, y0, x0, y1, x1, color)
+Method to generate a line profile from (x0,y0) to (x1,y1) of a 2d image
+using Bresenham's algorithm.
 
+"""
 function bresenham(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T) where T<:Colorant
     dx = abs(x1 - x0)
     dy = abs(y1 - y0)
@@ -102,6 +106,12 @@ function swap(x, y)
     y, x
 end
 
+"""
+    res = xiaolin_wu(img, x0, y0, x1, x2, color)
+Method to generate a line profile from (x0,y0) to (x1,y1) of a 2d image
+using Xiaolin Wu line algorithm.
+
+"""
 function xiaolin_wu(img::AbstractArray{T, 2}, y0::Int, x0::Int, y1::Int, x1::Int, color::T) where T<:Gray
     dx = x1 - x0
     dy = y1 - y0
