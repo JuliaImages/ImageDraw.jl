@@ -45,6 +45,7 @@ export
 	#Polygons
 	Polygon,
 	RegularPolygon,
+	Rectangle,
 
 	#Cross
 	Cross

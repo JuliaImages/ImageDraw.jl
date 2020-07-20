@@ -84,3 +84,14 @@ end
     expected[3:7, 6] .= Gray(1)
     @test all(expected .== @inferred draw(img, RegularPolygon(CartesianIndex(5,4), 4, 4, π/4))) == true
 end
+
+
+@testset "Rectangle" begin
+    img = zeros(Gray, 10, 10)
+    expected = copy(img)
+    expected[2, 3:7] .= Gray(1)
+    expected[5, 3:7] .= Gray(1)
+    expected[2:5, 3] .= Gray(1)
+    expected[2:5, 7] .= Gray(1)
+    @test all(expected .== @inferred draw(img, Rectangle(CartesianIndex(2,3),3,4))) == true
+end

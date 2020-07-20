@@ -136,6 +136,15 @@ struct Cross <: Drawable
     range::UnitRange{Int}
 end
 
+
+"""
+    rectangle = Rectangle(p, x, y)
+A `Drawable` rectangle from position p with length x and width y.
+"""
+
+Rectangle(p::CartesianIndex{2}, x::Int, y::Int) = 
+    Polygon([p,CartesianIndex(p[1],p[2]+y),CartesianIndex(p[1]+x,p[2]+y),CartesianIndex(p[1]+x, p[2])])
+
 """
     img = draw!(img, drawable, color)
     img = draw!(img, drawable)
