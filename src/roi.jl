@@ -67,3 +67,24 @@ function inset_roi(
 
     return img
 end
+
+function display_roi(
+    img::AbstractArray{T, 2},
+    roi::AbstractVector{NTuple{2, NTuple{2, <:Int}}},
+    size::AbstractVector{<:Real},
+    align::AbstractVector{AlignOptions},
+    color::AbstractVector{C}
+) where {T<:Colorant, C<:Colorant}
+    if !(length(roi) == length(size) == length(color) == length(align))
+        throw(ArgumentError("Arrays roi, size, align and color must be of the same length, instead got $(length(roi)), $(length(size)), $(length(align)) and $(length(color))"))
+    end
+
+    if length(roi) > 4
+        throw(ArgumentError("Only upto 4 regions of interest can be displayed, instead got $(length(roi))"))
+    end
+
+    if length(unique(align)) < length(align)
+        @warn "Similarly aligned regions will likely overlap"
+    end
+
+end
