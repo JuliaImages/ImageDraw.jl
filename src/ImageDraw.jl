@@ -1,7 +1,7 @@
 module ImageDraw
 
 # package code goes here
-using ImageCore, Distances
+using ImageCore, Distances, ImageTransformations
 
 include("core.jl")
 include("line2d.jl")
@@ -9,13 +9,15 @@ include("ellipse2d.jl")
 include("circle2d.jl")
 include("paths.jl")
 include("cross.jl")
+include("roi.jl")
 
 #export methods
 export
 	draw,
 	draw!,
 	bresenham,
-	xiaolin_wu
+	xiaolin_wu,
+	inset_roi
 
 #export types
 export
