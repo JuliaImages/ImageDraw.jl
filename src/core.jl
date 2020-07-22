@@ -145,6 +145,12 @@ A `Drawable` rectangle from position p with length x and width y.
 Rectangle(p::CartesianIndex{2}, x::Int, y::Int) = 
     Polygon([p,CartesianIndex(p[1],p[2]+y),CartesianIndex(p[1]+x,p[2]+y),CartesianIndex(p[1]+x, p[2])])
 
+Rectangle(a::Int, b::Int, x::Int, y::Int) = Rectangle(CartesianIndex(a, b), x, y)
+
+Rectangle(τ::Tuple{Int, Int}, x::Int, y::Int) = Rectangle(CartesianIndex(τ), x, y)
+
+Rectangle(p::Point, x::Int, y::Int) = Rectangle(p.x, p.y, x, y)
+
 """
     img = draw!(img, drawable, color)
     img = draw!(img, drawable)

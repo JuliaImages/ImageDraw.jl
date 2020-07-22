@@ -55,11 +55,11 @@ save("images/lighthouse_cross.png", img) # hide
 Drawing a Rectangle.
 
 ```@example usage
-using TestImages, ImageDraw, ColorVectorSpace
+using TestImages, ImageDraw, ImageCore
 using FileIO # hide
 img = testimage("lighthouse")
 
-draw!(img, Rectangle(CartesianIndex(50,300), 300, 100))
+draw!(img, Rectangle((50,300), 300, 100), RGB(1, 0, 0))
 save("images/lighthouse_rectangle.png", img) # hide
 ```
 
