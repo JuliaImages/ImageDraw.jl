@@ -1,4 +1,5 @@
 @enum AlignOptions begin
+    auto = 0
     top_left = 1
     top_right = 2
     bottom_right = 3
@@ -7,10 +8,10 @@ end
 
 function inset_roi(
     img::AbstractArray{T, 2},
-    roi::NTuple{2, NTuple{2, <:Int}},
-    scale::R,
-    align::AlignOptions,
-    color::C
+    roi::NTuple{2, NTuple{2, <:Int}};
+    scale::R = -1, # try to make the view 1/6th or the image area, else as large as fits
+    align::AlignOptions = auto, # not let the view obscure the ROI itself
+    color::C = Gray(1.0) # to not convert Gray images to RGB in the default case
 ) where {T<:Colorant, R<:Real, C<:Colorant}
 
     ((sx, sy), (ex, ey)) = roi
@@ -20,6 +21,17 @@ function inset_roi(
        !checkindex(Bool, axes(img, 2), sy) ||
        !checkindex(Bool, axes(img, 2), ey)
         throw(ArgumentError("Region of interest lies out of image"))
+    end
+
+    if scale <= 0 && scale != -1
+        throw(ArgumentError("Scale must be positive, instead got $(scale)"))
+    end
+
+    if scale == -1
+        h = ex - sx + 1
+        w = ey - sy + 1
+        scale = sqrt(prod(size(img)) / (6 * h * w))
+        scale = min((size(img)[1])/h, (size(img)[2])/w, scale)
     end
 
     U = promote_type(T, C) # support different types natively
@@ -49,6 +61,31 @@ function inset_roi(
         (sy, ex)
     ]
     draw!(img, Polygon(roi_rect), color)
+
+    if align == auto
+        if first(axes(img, 1))+size(roi_image, 1)-1 < sx ||
+           first(axes(img, 2))+size(roi_image, 2)-1 < sy
+            align = top_left
+
+        elseif first(axes(img, 1))+size(roi_image, 1)-1 < sx ||
+                last(axes(img, 2))-size(roi_image, 2)+1 > ey
+            align = top_right
+
+        elseif last(axes(img, 1))-size(roi_image, 1)+1 > ex ||
+                last(axes(img, 2))-size(roi_image, 2)+1 > ey
+            align = bottom_right
+
+        elseif last(axes(img, 1))-size(roi_image, 1)+1 > ex ||
+                first(axes(img, 2))+size(roi_image, 2)-1 < sy
+            align = bottom_left
+            
+        end
+
+        if align == auto
+            @warn "Could not determine overlap-free placement with current settings."
+            align = top_left
+        end
+    end
 
     if align == top_left
         img[first(axes(img, 1)):first(axes(img, 1))+size(roi_image, 1)-1,
