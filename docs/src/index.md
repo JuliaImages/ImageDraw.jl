@@ -59,7 +59,7 @@ using TestImages, ImageDraw, ImageCore
 using FileIO # hide
 img = testimage("lighthouse")
 
-draw!(img, Rectangle((50,300), 300, 100), RGB(1, 0, 0))
+draw!(img, Rectangle((50,300), (350, 400)), RGB(1, 0, 0))
 save("images/lighthouse_rectangle.png", img) # hide
 ```
 

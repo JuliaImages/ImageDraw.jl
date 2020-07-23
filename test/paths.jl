@@ -93,5 +93,5 @@ end
     expected[5, 3:7] .= Gray(1)
     expected[2:5, 3] .= Gray(1)
     expected[2:5, 7] .= Gray(1)
-    @test all(expected .== @inferred draw(img, Rectangle(CartesianIndex(2,3),3,4))) == true
+    @test all(expected .== @inferred draw(img, Rectangle((2,3),(5,7)))) == true
 end

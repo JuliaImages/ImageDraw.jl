@@ -138,18 +138,18 @@ end
 
 
 """
-    rectangle = Rectangle(p, x, y)
-A `Drawable` rectangle from position p with length x and width y.
+    rectangle = Rectangle(p1, p2)
+A `Drawable` rectangle with p1 as top left and p2 as bottom right vertices.
 """
 
-Rectangle(p::CartesianIndex{2}, x::Int, y::Int) = 
-    Polygon([p,CartesianIndex(p[1],p[2]+y),CartesianIndex(p[1]+x,p[2]+y),CartesianIndex(p[1]+x, p[2])])
+Rectangle(from::CartesianIndex{2}, to::CartesianIndex{2}) = 
+    Polygon([from,CartesianIndex(from[1],to[2]),to,CartesianIndex(to[1], from[2])])
 
-Rectangle(a::Int, b::Int, x::Int, y::Int) = Rectangle(CartesianIndex(a, b), x, y)
+Rectangle(x1::Int, y1::Int, x2::Int, y2::Int) = Rectangle(CartesianIndex(x1, y1), CartesianIndex(x2, y2))
 
-Rectangle(τ::Tuple{Int, Int}, x::Int, y::Int) = Rectangle(CartesianIndex(τ), x, y)
+Rectangle(from::Tuple{Int, Int}, to::Tuple{Int, Int}) = Rectangle(CartesianIndex(from), CartesianIndex(to))
 
-Rectangle(p::Point, x::Int, y::Int) = Rectangle(p.x, p.y, x, y)
+Rectangle(from::Point, to::Point) = Rectangle(from.x, from.y, to.x, to.y)
 
 """
     img = draw!(img, drawable, color)
