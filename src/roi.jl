@@ -8,13 +8,30 @@ end
 
 function inset_roi(
     img::AbstractArray{T, 2},
-    roi::NTuple{2, NTuple{2, <:Int}};
+    roi::Union{NTuple{2, <:AbstractUnitRange}, CartesianIndices{2}};
     scale::R = -1, # try to make the view 1/6th or the image area, else as large as fits
     align::AlignOptions = auto, # not let the view obscure the ROI itself
     color::C = Gray(1.0) # to not convert Gray images to RGB in the default case
 ) where {T<:Colorant, R<:Real, C<:Colorant}
 
-    ((sx, sy), (ex, ey)) = roi
+    if typeof(roi) <: CartesianIndices{2}
+        sx = first(roi)[1]
+        sy = first(roi)[2]
+
+        ex = last(roi)[1]
+        ey = last(roi)[2]
+    else
+        sx = first(first(roi))
+        ex = last(first(roi))
+
+        sy = first(last(roi))
+        ey = last(last(roi))
+
+    end
+
+    if sx >= ex || sy >= ey
+        throw(ArgumentError("Region of interest must be an increasing range"))
+    end
 
     if !checkindex(Bool, axes(img, 1), sx) ||
        !checkindex(Bool, axes(img, 1), ex) ||
@@ -78,7 +95,7 @@ function inset_roi(
         elseif last(axes(img, 1))-size(roi_image, 1)+1 > ex ||
                 first(axes(img, 2))+size(roi_image, 2)-1 < sy
             align = bottom_left
-            
+
         end
 
         if align == auto
