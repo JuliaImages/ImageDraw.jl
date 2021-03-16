@@ -60,6 +60,8 @@ A `Drawable` circle having center `center` and radius `ρ`
 struct CirclePointRadius{T<:Real} <: Circle
     center::Point
     ρ::T
+    thickness::Int
+	fill::Bool
 end
 
 """
@@ -94,6 +96,8 @@ struct Ellipse{T<:Real, U<:Real} <: Drawable
     center::Point
     ρx::T
     ρy::U
+    thickness::Int
+	fill::Bool
 end
 
 """
