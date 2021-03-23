@@ -25,7 +25,7 @@ using FileIO # hide
 img = testimage("lighthouse")
 
 # Detect edges at different scales by adjusting the `spatial_scale` parameter.
-draw!(img, Ellipse(CirclePointRadius(350,200,100)))
+draw!(img, Ellipse(CirclePointRadius(350,200,100,0,true)))
 save("images/lighthouse_circle.png", img) # hide
 ```
 
