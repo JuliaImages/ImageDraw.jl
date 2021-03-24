@@ -35,22 +35,19 @@ When displayed, these three images look like this:
 <p>
 ```
 
-```
 
 Drawing a Rectangle.
 
 ```@example usage
-using TestImages, ImageDraw, ImageCore
+using TestImages, ImageDraw, ImageCore, ImageShow
 using FileIO # hide
 img = testimage("lighthouse")
-img_example = draw!(img, Polygon(RectanglePoints(Point(1, 1), Point(5, 9))), RGB{N0f8}(1))
-save("images/lighthouse_rectangle.png", img_example) # hide
+
+img_example_stage1 = draw!(img, Polygon(RectanglePoints(Point(10, 10), Point(100, 100))), RGB{N0f8}(1))
+img_example_stage2 = draw!(img_example_stage1, Polygon(RectanglePoints(CartesianIndex(110, 10), CartesianIndex(200, 200))), RGB{N0f8}(1))
+img_example_stage3 = draw!(img_example_stage2, Polygon(RectanglePoints(220, 10, 300, 300)), RGB{N0f8}(1))
 ```
 
-```@raw html
-<img src="images/lighthouse_rectangle.png" width="512px" alt="lighthouse_rectangle" />
-<p>
-```
 
 Drawing a Cross.
 

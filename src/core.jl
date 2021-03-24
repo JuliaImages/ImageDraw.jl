@@ -110,10 +110,26 @@ struct Polygon <: Drawable
 end
 
 """
-    rectangle = RectanglePoints(p1,p2)
+    rectangle = RectanglePoints(p1, p2)
+    rectangle = RectanglePoints(x1, y1, x2, y2)
 
 A `Drawable` rectangle i.e. a closed path where parameters `p1` and `p2` 
 are diagonally opposite vertices of the rectangle.
+
+Parameters `p1` and `p2` can be passed in Point struct format or CartesianIndex{} format as shown in example below.
+
+# Examples
+```julia
+using TestImages, ImageDraw, ImageCore
+img = testimage("lighthouse")
+
+# rectangles drawn on img using different methods of passing parameters
+img_example = draw!(img, Polygon(RectanglePoints(Point(10, 10), Point(100, 100))), RGB{N0f8}(1))
+img_example = draw!(img_example, Polygon(RectanglePoints(CartesianIndex(110, 10), CartesianIndex(200, 200))), RGB{N0f8}(1))
+img_example = draw!(img_example, Polygon(RectanglePoints(220, 10, 300, 300)), RGB{N0f8}(1))
+
+```
+
 """
 struct RectanglePoints <: Rectangle
     p1::Point
