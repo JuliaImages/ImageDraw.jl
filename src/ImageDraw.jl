@@ -9,6 +9,7 @@ include("ellipse2d.jl")
 include("circle2d.jl")
 include("paths.jl")
 include("cross.jl")
+include("rectangle.jl")
 
 #export methods
 export
@@ -45,6 +46,7 @@ export
 	#Polygons
 	Polygon,
 	RegularPolygon,
+	RectanglePoints,
 
 	#Cross
 	Cross

@@ -6,7 +6,7 @@ A drawing package for JuliaImages
 Depth = 3
 ```
 
-## introduction
+## Introduction
 
 ImageDraw supports basic drawing on Images. You can draw points, lines, circles, ellipse and paths.  
 
@@ -32,6 +32,23 @@ save("images/lighthouse_circle.png", img) # hide
 When displayed, these three images look like this:
 ```@raw html
 <img src="images/lighthouse_circle.png" width="512px" alt="edge detection demo 1 image" />
+<p>
+```
+
+```
+
+Drawing a Rectangle.
+
+```@example usage
+using TestImages, ImageDraw, ImageCore
+using FileIO # hide
+img = testimage("lighthouse")
+img_example = draw!(img, Polygon(RectanglePoints(Point(1, 1), Point(5, 9))), RGB{N0f8}(1))
+save("images/lighthouse_rectangle.png", img_example) # hide
+```
+
+```@raw html
+<img src="images/lighthouse_rectangle.png" width="512px" alt="lighthouse_rectangle" />
 <p>
 ```
 

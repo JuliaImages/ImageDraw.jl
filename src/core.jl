@@ -16,6 +16,7 @@ end
 
 abstract type Line <: Drawable end
 abstract type Circle <: Drawable end
+abstract type Rectangle <: Drawable end
 
 
 """
@@ -106,6 +107,17 @@ consecutive points in `[vertex]` along with the first and last point.
 """
 struct Polygon <: Drawable
     vertices::Vector{Point}
+end
+
+"""
+    rectangle = RectanglePoints(p1,p2)
+
+A `Drawable` rectangle i.e. a closed path where parameters `p1` and `p2` 
+are diagonally opposite vertices of the rectangle.
+"""
+struct RectanglePoints <: Rectangle
+    p1::Point
+    p2::Point
 end
 
 """
