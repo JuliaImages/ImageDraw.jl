@@ -25,7 +25,7 @@ using FileIO # hide
 img = testimage("lighthouse")
 
 # Detect edges at different scales by adjusting the `spatial_scale` parameter.
-draw!(img, Ellipse(CirclePointRadius(350,200,100,0,true)))
+draw!(img, Ellipse(CirclePointRadius(350,200,100)))
 save("images/lighthouse_circle.png", img) # hide
 ```
 
@@ -33,6 +33,17 @@ When displayed, these three images look like this:
 ```@raw html
 <img src="images/lighthouse_circle.png" width="512px" alt="edge detection demo 1 image" />
 <p>
+```
+
+Drawing a circle with a thickness
+
+```@example usage
+using TestImages, ImageDraw, ColorVectorSpace
+using FileIO # hide
+img = testimage("lighthouse")
+
+# With keyword argument fill = false, circle with given thickness is computed 
+draw!(img, Ellipse(CirclePointRadius(350, 200, 100; thickness = 75, fill = false)))
 ```
 
 Drawing a Cross.

@@ -15,19 +15,33 @@ using LinearAlgebra
                                 0 0 1 1 1 1 1 0 0 0
                                 0 0 0 0 0 0 0 0 0 0 ]
 
-        res = @inferred draw(img, CirclePointRadius(Point(5,5), 5, 0, true))
+        res = @inferred draw(img, CirclePointRadius(Point(5,5), 5))
         @test all(expected .== res) == true
 
-        res = @inferred draw(img, CirclePointRadius(5, 5, 5, 0, true))
+        res = @inferred draw(img, CirclePointRadius(5, 5, 5))
         @test all(expected .== res) == true
 
-        res = @inferred draw(img, CirclePointRadius(CartesianIndex(5,5), 5, 0, true))
+        res = @inferred draw(img, CirclePointRadius(CartesianIndex(5,5), 5))
         @test all(expected .== res) == true
 
-        res = @inferred draw(img, CirclePointRadius(Point(5,5), 5, 0, true), Gray{N0f8}(0.5))
+        res = @inferred draw(img, CirclePointRadius(Point(5,5), 5), Gray{N0f8}(0.5))
         expected = map(i->(i==1 ? Gray{N0f8}(0.5) : Gray{N0f8}(0)), expected)
         @test all(expected .== res) == true
 
+        img = zeros(Gray{N0f8}, 10, 10)
+        expected = Gray{N0f8}[ 0 0 0 0 0 0 0 0 0 0
+                               0 0 0 1 1 1 1 1 0 0
+                               0 0 1 1 1 1 1 1 1 0
+                               0 1 1 1 0 0 0 1 1 1
+                               0 1 1 0 0 0 0 0 1 1
+                               0 1 1 0 0 0 0 0 1 1
+                               0 1 1 0 0 0 0 0 1 1
+                               0 1 1 1 0 0 0 1 1 1
+                               0 0 1 1 1 1 1 1 1 0
+                               0 0 0 1 1 1 1 1 0 0 ]
+
+        res = @inferred draw(img, CirclePointRadius(Point(6, 6), 5, 3, false))
+        @test all(expected .== res)
     end
 
     @testset "CircleThreePoints" begin

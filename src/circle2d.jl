@@ -1,8 +1,9 @@
 import LinearAlgebra: det
 
 #CirclePointRadius methods
-CirclePointRadius(x::Int, y::Int, ρ::T,thickness::Int,fill::Bool) where {T<:Real} = CirclePointRadius(Point(x,y), ρ,thickness,fill)
-CirclePointRadius(p::CartesianIndex{2}, ρ::T,thickness::Int,fill::Bool) where {T<:Real} = CirclePointRadius(Point(p), ρ,thickness,fill)
+
+CirclePointRadius(x::Int, y::Int, ρ::T; thickness::Int = 0, fill::Bool = true) where {T<:Real} = CirclePointRadius(Point(x,y), ρ, thickness, fill)
+CirclePointRadius(p::CartesianIndex{2}, ρ::T; thickness::Int = 0, fill::Bool = true) where {T<:Real} = CirclePointRadius(Point(p), ρ, thickness, fill)
 
 draw!(img::AbstractArray{T, 2}, circle::CirclePointRadius, color::T) where {T<:Colorant} = draw!(img, Ellipse(circle), color)
 

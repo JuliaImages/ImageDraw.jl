@@ -53,16 +53,36 @@ struct CircleThreePoints <: Circle
 end
 
 """
-    circle = CirclePointRadius(center, ρ)
+    circle = CirclePointRadius(center, ρ; thickness, fill)
 
 A `Drawable` circle having center `center` and radius `ρ`
+with keyword arguments `thickness` and `fill` for drawing hollow circle
+
+# Arguments
+- `thickness::Integer`: thickness of the circle 
+- `fill::Bool`: argument to determine whether to fill the circle or not
+
+# Examples
+```
+julia> using ImageDraw,TestImages,ImageView, ColorVectorSpace
+julia> img = testimage("lighthouse")
+
+julia> draw!(img, Ellipse(CirclePointRadius(350,200,100))) 
+julia> draw!(img, Ellipse(CirclePointRadius(150,200,100; thickness = 70 , fill = false)))
+
+julia> imshow(img)
+
+```
+
 """
 struct CirclePointRadius{T<:Real} <: Circle
     center::Point
     ρ::T
     thickness::Int
-	fill::Bool
+    fill::Bool
 end
+
+CirclePointRadius(center::Point, ρ::Real; thickness=1, fill=true) = CirclePointRadius(center, ρ, thickness, fill)
 
 """
     ls = LineSegment(p1, p2)
@@ -90,6 +110,7 @@ end
     ellipse = Ellipse(center, ρx, ρy)
 
 A `Drawable` ellipse with center `center` and parameters `ρx` and `ρy`
+with keyword arguments `thickness` and `fill` for drawing hollow ellipse
 
 """
 struct Ellipse{T<:Real, U<:Real} <: Drawable
@@ -97,8 +118,10 @@ struct Ellipse{T<:Real, U<:Real} <: Drawable
     ρx::T
     ρy::U
     thickness::Int
-	fill::Bool
+    fill::Bool
 end
+
+Ellipse(center::Point, ρx::T, ρy::U; thickness::Int =  0, fill::Bool = true) where {T<:Real, U<:Real} = Ellipse(center, ρx, ρy, thickness, fill)
 
 """
     polygon = Polygon([vertex])
