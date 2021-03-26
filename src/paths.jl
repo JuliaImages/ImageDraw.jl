@@ -15,6 +15,7 @@ end
 
 Polygon(v::AbstractVector{Tuple{Int, Int}}) = Polygon([Point(p...) for p in v])
 Polygon(v::AbstractVector{CartesianIndex{2}}) = Polygon([Point(p) for p in v])
+Polygon(rectangle::RectanglePoints) = Polygon([rectangle.p1, Point(rectangle.p2.x, rectangle.p1.y), rectangle.p2, Point(rectangle.p1.x, rectangle.p2.y)])
 
 function draw!(img::AbstractArray{T, 2}, polygon::Polygon, color::T) where T<:Colorant
     draw!(img, Path(polygon.vertices), color)

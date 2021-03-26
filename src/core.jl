@@ -16,6 +16,7 @@ end
 
 abstract type Line <: Drawable end
 abstract type Circle <: Drawable end
+abstract type Rectangle <: Drawable end
 
 
 """
@@ -106,6 +107,34 @@ consecutive points in `[vertex]` along with the first and last point.
 """
 struct Polygon <: Drawable
     vertices::Vector{Point}
+end
+
+"""
+    rectangle = RectanglePoints(p1, p2)
+    rectangle = RectanglePoints(x1, y1, x2, y2)
+
+A `Drawable` rectangle i.e. a closed path where parameters `p1` and `p2` 
+are diagonally opposite vertices of the rectangle.
+
+Parameters `p1` and `p2` can be passed in either `Point` struct format or `CartesianIndex` format as shown in example below.
+`(x1, y1, x2, y2)` is interpreted as `(CartesianIndex(x1, y1), CartesianIndex(x2, y2))`.
+
+# Examples
+
+```julia
+using TestImages, ImageDraw, ImageCore
+img = testimage("lighthouse")
+
+# rectangles drawn on img using different methods of passing parameters
+draw!(img, Polygon(RectanglePoints(Point(10, 10), Point(100, 100))), RGB{N0f8}(1))
+draw!(img, Polygon(RectanglePoints(CartesianIndex(110, 10), CartesianIndex(200, 200))), RGB{N0f8}(1))
+draw!(img, Polygon(RectanglePoints(220, 10, 300, 300)), RGB{N0f8}(1))
+```
+
+"""
+struct RectanglePoints <: Rectangle
+    p1::Point
+    p2::Point
 end
 
 """
