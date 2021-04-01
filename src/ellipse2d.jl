@@ -1,16 +1,13 @@
 #Ellipse methods
 
-Ellipse(x::Int, y::Int, ρx::T, ρy::U; thickness::Int =  0, fill::Bool = true) where {T<:Real, U<:Real} = Ellipse(Point(x,y), ρx, ρy, thickness, fill)
-Ellipse(p::CartesianIndex{2}, ρx::T, ρy::U; thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real} = Ellipse(Point(p), ρx, ρy, thickness, fill)
-Ellipse(circle::CirclePointRadius) = Ellipse(circle.center, circle.ρ, circle.ρ, circle.thickness, circle.fill)
+Ellipse(x::Int, y::Int, ρx::T, ρy::U; thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real} = Ellipse{T, U}(Point(x,y), ρx, ρy, thickness, fill)
+Ellipse(p::CartesianIndex{2}, ρx::T, ρy::U; thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real} = Ellipse{T, U}(Point(p), ρx, ρy, thickness, fill)
+Ellipse(circle::CirclePointRadius) = Ellipse(circle.center, circle.ρ, circle.ρ;  thickness = circle.thickness, fill = circle.fill)
 
 function draw!(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T) where T<:Colorant
 	ys = Int[]
 	xs = Int[]
 	break_point = 0
-    if ellipse.thickness >= ellipse.ρy || ellipse.thickness >= ellipse.ρx
-		error("Thickness greater than a,b not allowed")
-	end
 	if ellipse.fill == false
         break_point = ((ellipse.ρy - ellipse.thickness)/ ellipse.ρy) ^ 2 + ((ellipse.ρx - ellipse.thickness)/ ellipse.ρx) ^ 2 
 	end

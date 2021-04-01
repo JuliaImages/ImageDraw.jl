@@ -40,8 +40,17 @@ using LinearAlgebra
                                0 0 1 1 1 1 1 1 1 0
                                0 0 0 1 1 1 1 1 0 0 ]
 
-        res = @inferred draw(img, CirclePointRadius(Point(6, 6), 5, 3, false))
+        res = @inferred draw(img, CirclePointRadius(Point(6, 6), 5; thickness = 3, fill = false))
         @test all(expected .== res)
+
+        @test CirclePointRadius(Point(6, 6), 5, 3, false) == CirclePointRadius(Point(6, 6), 5; thickness = 3, fill = false)
+        
+        err = ArgumentError("Thickness 7 should be smaller than 5.")
+        @test_throws err CirclePointRadius(CartesianIndex(6, 6), 5; thickness = 7, fill = false)
+
+        # expected = CirclePointRadius(Point(6, 6), 5; thickness=UInt8(1), fill=false)
+        # res = CirclePointRadius(Point(6, 6), 5; thickness=1, fill=false)
+        # @test expected == res
     end
 
     @testset "CircleThreePoints" begin
