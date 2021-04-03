@@ -3,6 +3,8 @@ Type representing any object drawable on image
 """
 abstract type Drawable end
 
+abstract type AbstractPolyFillAlgorithm end
+
 """
     p = Point(x,y)
     p = Point(c)
@@ -108,6 +110,24 @@ consecutive points in `[vertex]` along with the first and last point.
 struct Polygon <: Drawable
     vertices::Vector{Point}
 end
+
+"""
+    boundaryfill(x::Int, y::Int, fill_color::T, boundarycolor::T)
+
+
+"""
+struct boundaryfill{T<:Colorant} <: AbstractPolyFillAlgorithm
+	x::Int
+	y::Int
+	fill_color::T
+    boundarycolor::T
+    function boundaryfill(x::Int,y::Int,fill_color::T,boundarycolor::T) where {T<:Colorant}
+        println("Test 1")
+        new{T}(x,y,fill_color,boundarycolor)
+    end
+end
+
+boundaryfill(x::Int=0, y::Int=0, fill_color::Colorant=RGB(1), boundarycolor::Colorant=RGB(1)) = boundaryfill(x, y, fill_color, boundarycolor)
 
 """
     rectangle = RectanglePoints(p1, p2)
