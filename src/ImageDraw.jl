@@ -10,6 +10,7 @@ include("circle2d.jl")
 include("paths.jl")
 include("cross.jl")
 include("rectangle.jl")
+include("polygonfill2d.jl")
 
 #export methods
 export
@@ -51,4 +52,7 @@ export
 	#Cross
 	Cross
 
+	#Polygon fill
+	boundaryfill
+	
 end # module
