@@ -60,7 +60,7 @@ A `Drawable` circle having center `center` and radius `ρ`
 with keyword arguments `thickness` and `fill` for drawing hollow circle
 
 # Arguments
-- `thickness::Integer`: thickness of the circle 
+- `thickness::Int`: thickness of the circle
 - `fill::Bool`: argument to determine whether to fill the circle or not
 
 # Examples
@@ -116,7 +116,7 @@ A `Drawable` ellipse with center `center` and parameters `ρx` and `ρy`
 with keyword arguments `thickness` and `fill` for drawing hollow ellipse
 
 # Arguments
-- `thickness::Integer`: thickness of the ellipse
+- `thickness::Int`: thickness of the circle
 - `fill::Bool`: argument to determine whether to fill the ellipse or not
 
 # Examples

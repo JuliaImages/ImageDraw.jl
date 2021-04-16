@@ -9,7 +9,7 @@ function draw!(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T) where T<:Co
 	xs = Int[]
 	break_point = 0
 	if ellipse.fill == false
-        break_point = ((ellipse.ρy - ellipse.thickness)/ ellipse.ρy) ^ 2 + ((ellipse.ρx - ellipse.thickness)/ ellipse.ρx) ^ 2 
+		break_point = ((ellipse.ρy - ellipse.thickness) / ellipse.ρy) ^ 2 + ((ellipse.ρx - ellipse.thickness) / ellipse.ρx) ^ 2 
 	end
 	for i in ellipse.center.y : ellipse.center.y + ellipse.ρy
 		for j in ellipse.center.x : ellipse.center.x + ellipse.ρx

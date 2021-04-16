@@ -48,6 +48,12 @@ using LinearAlgebra
         err = ArgumentError("Thickness 7 should be smaller than 5.")
         @test_throws err CirclePointRadius(CartesianIndex(6, 6), 5; thickness = 7, fill = false)
 
+        @test draw(img, CirclePointRadius(Point(6, 6), 5; thickness = 0, fill = true)) == draw(img, CirclePointRadius(Point(6, 6), 5))
+
+        @test draw(img, CirclePointRadius(CartesianIndex(5,5), 5; thickness = 0, fill = true)) == draw(img, CirclePointRadius(CartesianIndex(5,5), 5))
+        
+        @test draw(img, CirclePointRadius(5, 5, 5; thickness = 0, fill = true)) == draw(img, CirclePointRadius(5, 5, 5))
+
         # expected = CirclePointRadius(Point(6, 6), 5; thickness=UInt8(1), fill=false)
         # res = CirclePointRadius(Point(6, 6), 5; thickness=1, fill=false)
         # @test expected == res
