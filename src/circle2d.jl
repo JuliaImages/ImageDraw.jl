@@ -2,8 +2,8 @@ import LinearAlgebra: det
 
 #CirclePointRadius methods
 
-CirclePointRadius(x::Int, y::Int, ρ::T; thickness::Int = 0, fill::Bool = true) where {T<:Real} = CirclePointRadius{T}(Point(x,y), ρ, thickness, fill)
-CirclePointRadius(p::CartesianIndex{2}, ρ::T; thickness::Int = 0, fill::Bool = true) where {T<:Real} = CirclePointRadius{T}(Point(p), ρ, thickness, fill)
+CirclePointRadius(x::Int, y::Int, args...; kwargs...) = CirclePointRadius(Point(x,y), args...; kwargs...)
+CirclePointRadius(p::CartesianIndex{2}, args...; kwargs...) = CirclePointRadius(Point(p), args...; kwargs...)
 
 draw!(img::AbstractArray{T, 2}, circle::CirclePointRadius, color::T) where {T<:Colorant} = draw!(img, Ellipse(circle), color)
 
@@ -25,5 +25,5 @@ function draw!(img::AbstractArray{T, 2}, circle::CircleThreePoints, color::T) wh
     ρ = euclidean([x1, y1], R)
     (first(ind[2]) <= R[1] <= last(ind[2]) && first(ind[1]) <= R[2] <= last(ind[1])) || error("Center of circle is out of the bounds of image")
     ρ - 1 <= minimum(abs, [R[1] - first(ind[2]), R[1] - last(ind[2]), R[2] - first(ind[1]), R[2] - last(ind[1])]) || error("Circle is out of the bounds of image : Radius is too large")
-    draw!(img, CirclePointRadius(Point(round(Int,R[1]), round(Int,R[2])), ρ, 0, true), color)
+    draw!(img, CirclePointRadius(Point(round(Int,R[1]), round(Int,R[2])), ρ; thickness=0, fill=true), color)
 end

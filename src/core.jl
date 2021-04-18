@@ -78,14 +78,13 @@ struct CirclePointRadius{T<:Real} <: Circle
     ρ::T
     thickness::Int
     fill::Bool
-    function CirclePointRadius{T}(center::Point, ρ::T, thickness::Int = 0, fill::Bool = true) where {T<:Real}
+    function CirclePointRadius{T}(center::Point, ρ::T; thickness::Int = 0, fill::Bool = true) where {T<:Real}
         thickness >= ρ && throw(ArgumentError("Thickness $thickness should be smaller than $(ρ)."))
         new{T}(center, ρ, thickness, fill)
     end
 end
 
-CirclePointRadius(center::Point, ρ::T; thickness::Int = 0, fill::Bool = true) where {T<:Real} = CirclePointRadius{T}(center, ρ, thickness, fill)
-CirclePointRadius(center::Point, ρ::T, thickness::Int = 0, fill::Bool = true) where {T<:Real} = CirclePointRadius{T}(center, ρ, thickness, fill)
+CirclePointRadius(center::Point, ρ::T; kwargs...) where {T<:Real} = CirclePointRadius{T}(center, ρ; kwargs...)
 
 """
     ls = LineSegment(p1, p2)
@@ -136,14 +135,13 @@ struct Ellipse{T<:Real, U<:Real} <: Drawable
     ρy::U
     thickness::Int
     fill::Bool
-    function Ellipse{T, U}(center, ρx::T, ρy::U, thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real}
+    function Ellipse{T, U}(center, ρx::T, ρy::U; thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real}
         thickness >= min(ρx, ρy) && throw(ArgumentError("Thickness $thickness should be smaller than $(min(ρx, ρy))."))
         new{T, U}(center, ρx, ρy, thickness, fill)
     end
 end
 
-Ellipse(center::Point, ρx::T, ρy::U; thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real} = Ellipse{T,U}(center, ρx, ρy, thickness, fill)
-Ellipse(center::Point, ρx::T, ρy::U, thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real} = Ellipse{T,U}(center, ρx, ρy, thickness, fill)
+Ellipse(center::Point, ρx::T, ρy::U; kwargs...) where {T<:Real, U<:Real} = Ellipse{T,U}(center, ρx, ρy; kwargs...)
 
 """ 
     polygon = Polygon([vertex])
