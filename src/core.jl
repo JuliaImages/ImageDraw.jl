@@ -54,14 +54,38 @@ struct CircleThreePoints <: Circle
 end
 
 """
-    circle = CirclePointRadius(center, ρ)
+    circle = CirclePointRadius(center, ρ; thickness = 0, fill = false)
 
 A `Drawable` circle having center `center` and radius `ρ`
+with keyword arguments `thickness` and `fill` for drawing hollow circle
+
+# Arguments
+- `thickness::Int`: thickness of the circle
+- `fill::Bool`: argument to determine whether to fill the circle or not
+
+# Examples
+```
+using ImageDraw,TestImages,ImageView, ColorVectorSpace
+img = testimage("lighthouse")
+
+draw!(img, Ellipse(CirclePointRadius(350,200,100))) 
+draw!(img, Ellipse(CirclePointRadius(150,200,100; thickness = 70 , fill = false)))
+```
+
 """
 struct CirclePointRadius{T<:Real} <: Circle
     center::Point
     ρ::T
+    thickness::Int
+    fill::Bool
+    function CirclePointRadius{T}(center::Point, ρ::T, thickness::Int = 0, fill::Bool = true) where {T<:Real}
+        thickness >= ρ && throw(ArgumentError("Thickness $thickness should be smaller than $(ρ)."))
+        new{T}(center, ρ, thickness, fill)
+    end
 end
+
+CirclePointRadius(center::Point, ρ::T; thickness::Int = 0, fill::Bool = true) where {T<:Real} = CirclePointRadius{T}(center, ρ, thickness, fill)
+CirclePointRadius(center::Point, ρ::T, thickness::Int = 0, fill::Bool = true) where {T<:Real} = CirclePointRadius{T}(center, ρ, thickness, fill)
 
 """
     ls = LineSegment(p1, p2)
@@ -86,18 +110,42 @@ struct Path <: Drawable
 end
 
 """
-    ellipse = Ellipse(center, ρx, ρy)
+    ellipse = Ellipse(center, ρx, ρy; thickness = 0,fill = false)
 
 A `Drawable` ellipse with center `center` and parameters `ρx` and `ρy`
+with keyword arguments `thickness` and `fill` for drawing hollow ellipse
 
+# Arguments
+- `thickness::Int`: thickness of the circle
+- `fill::Bool`: argument to determine whether to fill the ellipse or not
+
+# Examples
+```
+using ImageDraw,TestImages,ImageView, ColorVectorSpace
+img = testimage("lighthouse")
+
+draw(img, Ellipse(5, 5, 5, 5), Gray{N0f8}(0.5))
+draw(img, Ellipse(CartesianIndex(5,5), 5, 3))
+draw(img, Ellipse(CirclePointRadius(Point(6, 6), 5; thickness = 4, fill = false)))
+```
 """
+
 struct Ellipse{T<:Real, U<:Real} <: Drawable
     center::Point
     ρx::T
     ρy::U
+    thickness::Int
+    fill::Bool
+    function Ellipse{T, U}(center, ρx::T, ρy::U, thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real}
+        thickness >= min(ρx, ρy) && throw(ArgumentError("Thickness $thickness should be smaller than $(min(ρx, ρy))."))
+        new{T, U}(center, ρx, ρy, thickness, fill)
+    end
 end
 
-"""
+Ellipse(center::Point, ρx::T, ρy::U; thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real} = Ellipse{T,U}(center, ρx, ρy, thickness, fill)
+Ellipse(center::Point, ρx::T, ρy::U, thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real} = Ellipse{T,U}(center, ρx, ρy, thickness, fill)
+
+""" 
     polygon = Polygon([vertex])
 
 A `Drawable` polygon i.e. a closed path created by joining the

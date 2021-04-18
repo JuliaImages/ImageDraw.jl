@@ -35,6 +35,16 @@ When displayed, these three images look like this:
 <p>
 ```
 
+Drawing a circle with a thickness
+
+```@example usage
+using TestImages, ImageDraw, ColorVectorSpace
+using FileIO # hide
+img = testimage("lighthouse")
+
+# With keyword argument fill = false, circle with given thickness is computed 
+draw!(img, Ellipse(CirclePointRadius(350, 200, 100; thickness = 75, fill = false)))
+```
 
 Drawing a Rectangle.
 
@@ -47,7 +57,6 @@ img_example_stage1 = draw!(img, Polygon(RectanglePoints(Point(10, 10), Point(100
 img_example_stage2 = draw!(img_example_stage1, Polygon(RectanglePoints(CartesianIndex(110, 10), CartesianIndex(200, 200))), RGB{N0f8}(1))
 img_example_stage3 = draw!(img_example_stage2, Polygon(RectanglePoints(220, 10, 300, 300)), RGB{N0f8}(1))
 ```
-
 
 Drawing a Cross.
 

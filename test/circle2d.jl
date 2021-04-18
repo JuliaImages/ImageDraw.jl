@@ -28,6 +28,35 @@ using LinearAlgebra
         expected = map(i->(i==1 ? Gray{N0f8}(0.5) : Gray{N0f8}(0)), expected)
         @test all(expected .== res) == true
 
+        img = zeros(Gray{N0f8}, 10, 10)
+        expected = Gray{N0f8}[ 0 0 0 0 0 0 0 0 0 0
+                               0 0 0 1 1 1 1 1 0 0
+                               0 0 1 1 1 1 1 1 1 0
+                               0 1 1 1 0 0 0 1 1 1
+                               0 1 1 0 0 0 0 0 1 1
+                               0 1 1 0 0 0 0 0 1 1
+                               0 1 1 0 0 0 0 0 1 1
+                               0 1 1 1 0 0 0 1 1 1
+                               0 0 1 1 1 1 1 1 1 0
+                               0 0 0 1 1 1 1 1 0 0 ]
+
+        res = @inferred draw(img, CirclePointRadius(Point(6, 6), 5; thickness = 3, fill = false))
+        @test all(expected .== res)
+
+        @test CirclePointRadius(Point(6, 6), 5, 3, false) == CirclePointRadius(Point(6, 6), 5; thickness = 3, fill = false)
+        
+        err = ArgumentError("Thickness 7 should be smaller than 5.")
+        @test_throws err CirclePointRadius(CartesianIndex(6, 6), 5; thickness = 7, fill = false)
+
+        @test draw(img, CirclePointRadius(Point(6, 6), 5; thickness = 0, fill = true)) == draw(img, CirclePointRadius(Point(6, 6), 5))
+
+        @test draw(img, CirclePointRadius(CartesianIndex(5,5), 5; thickness = 0, fill = true)) == draw(img, CirclePointRadius(CartesianIndex(5,5), 5))
+        
+        @test draw(img, CirclePointRadius(5, 5, 5; thickness = 0, fill = true)) == draw(img, CirclePointRadius(5, 5, 5))
+
+        # expected = CirclePointRadius(Point(6, 6), 5; thickness=UInt8(1), fill=false)
+        # res = CirclePointRadius(Point(6, 6), 5; thickness=1, fill=false)
+        # @test expected == res
     end
 
     @testset "CircleThreePoints" begin
