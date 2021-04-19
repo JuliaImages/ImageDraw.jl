@@ -25,5 +25,5 @@ function draw!(img::AbstractArray{T, 2}, circle::CircleThreePoints, color::T) wh
     ρ = euclidean([x1, y1], R)
     (first(ind[2]) <= R[1] <= last(ind[2]) && first(ind[1]) <= R[2] <= last(ind[1])) || error("Center of circle is out of the bounds of image")
     ρ - 1 <= minimum(abs, [R[1] - first(ind[2]), R[1] - last(ind[2]), R[2] - first(ind[1]), R[2] - last(ind[1])]) || error("Circle is out of the bounds of image : Radius is too large")
-    draw!(img, CirclePointRadius(Point(round(Int,R[1]), round(Int,R[2])), ρ; thickness=0, fill=true), color)
+    draw!(img, CirclePointRadius(Point(round(Int,R[1]), round(Int,R[2])), ρ), color)
 end
