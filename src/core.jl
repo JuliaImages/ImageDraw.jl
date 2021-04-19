@@ -3,6 +3,13 @@ Type representing any object drawable on image
 """
 abstract type Drawable end
 
+"""
+Root type for the polygon filling algorithm in `ImageDraw` packages
+
+Any concrete polygon filling algorithm shall subtype it to support 
+`draw` and `draw!` APIs.
+
+"""
 abstract type AbstractPolyFillAlgorithm end
 
 """
@@ -112,9 +119,45 @@ struct Polygon <: Drawable
 end
 
 """
+    BoundaryFill <: AbstractPolyFillAlgorithm
     BoundaryFill(x::Int, y::Int, fill_color::T, boundarycolor::T)
 
+    draw(img, verts, BoundaryFill(x, y, fill_color, boundary_color); connectverts)
+    draw!(img, verts, BoundaryFill(x, y, fill_color, boundary_color); connectverts)
 
+Applies Boundary Filling Algortithm on image inside the vertices provided in order
+
+# Output
+
+Return the boundary filled image inside the vertices(provided in order). 
+
+# Arguments
+
+## `x` && `y`
+
+Boundary fill is a seeded polygon filling algorithm.So we need to provide the seed (x,y) inside the image.
+ // To-do checking if verts and seed are inside the image or note
+ 
+## `fill_color`
+
+The pixels inside the boundary of vertices of polygon are filled with this colorant parameter.
+
+## `boundary_color`
+
+The pixels to define the boundary using verts is filled with this colorant parameter. 
+Without this parameter, the whole picture will be filled with the `fill_color`
+
+```julia
+using ImageDraw
+
+img = zeros(RGB, 7, 7)
+expected = copy(img)
+expected[2:6, 2:6] .= RGB{N0f8}(1)
+verts = [CartesianIndex(2, 2), CartesianIndex(2, 6), CartesianIndex(6, 6), CartesianIndex(6, 2), CartesianIndex(2,2)]
+
+draw(img, verts, BoundaryFill(x=4, y=4, fill_color=RGB(1), boundary_color=RGB(1)); connectverts=true)
+
+```
 """
 
 struct BoundaryFill{T<:Colorant} <: AbstractPolyFillAlgorithm

@@ -6,4 +6,7 @@
     
     res = @inferred draw(img, verts, BoundaryFill(x=4, y=4, fill_color=RGB(1), boundary_color=RGB(1)); connectverts=true)
     @test all(expected .== res) == true
+
+    res = @inferred draw!(img, verts, BoundaryFill(x=4, y=4, fill_color=RGB(1), boundary_color=RGB(1)); connectverts=true)
+    @test all(expected .== res) == true
 end
