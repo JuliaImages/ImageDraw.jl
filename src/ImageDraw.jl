@@ -53,6 +53,6 @@ export
 	Cross
 
 	#Polygon fill
-	boundaryfill
+	BoundaryFill
 	
 end # module

@@ -112,22 +112,23 @@ struct Polygon <: Drawable
 end
 
 """
-    boundaryfill(x::Int, y::Int, fill_color::T, boundarycolor::T)
+    BoundaryFill(x::Int, y::Int, fill_color::T, boundarycolor::T)
 
 
 """
-struct boundaryfill{T<:Colorant} <: AbstractPolyFillAlgorithm
+
+struct BoundaryFill{T<:Colorant} <: AbstractPolyFillAlgorithm
 	x::Int
 	y::Int
 	fill_color::T
-    boundarycolor::T
-    function boundaryfill(x::Int,y::Int,fill_color::T,boundarycolor::T) where {T<:Colorant}
-        println("Test 1")
-        new{T}(x,y,fill_color,boundarycolor)
+    boundary_color::T
+    function BoundaryFill(x::Int, y::Int, fill_color::T, boundary_color::T) where {T<:Colorant}
+        new{T}(x, y, fill_color, boundary_color)
     end
 end
 
-boundaryfill(x::Int=0, y::Int=0, fill_color::Colorant=RGB(1), boundarycolor::Colorant=RGB(1)) = boundaryfill(x, y, fill_color, boundarycolor)
+BoundaryFill(;x::Int=0, y::Int=0, fill_color::Colorant=RGB(1), boundary_color::Colorant=RGB(1)) = BoundaryFill(x, y, fill_color, boundary_color)
+
 
 """
     rectangle = RectanglePoints(p1, p2)
