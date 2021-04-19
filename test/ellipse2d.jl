@@ -52,9 +52,6 @@
                            0 0 0 1 1 1 1 1 0 0 ]
     res = @inferred draw(img, Ellipse(CirclePointRadius(Point(6, 6), 5; thickness = 4, fill = false)))
     @test all(expected .== res)
-
-
-    @test Ellipse(Point(6, 6), 5, 5, 3, false) == Ellipse(Point(6, 6), 5, 5; thickness = 3, fill = false)
         
     err = ArgumentError("Thickness 7 should be smaller than 5.")
     @test_throws err Ellipse(CartesianIndex(6, 6), 5, 5; thickness = 7, fill = false)
