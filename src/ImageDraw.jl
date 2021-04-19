@@ -50,7 +50,7 @@ export
 	RectanglePoints,
 
 	#Cross
-	Cross
+	Cross,
 
 	#Polygon fill
 	BoundaryFill
