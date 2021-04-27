@@ -10,7 +10,7 @@ tests = [
     "circle2d.jl",
     "paths.jl",
     "cross.jl",
-    "rectangle.jl",    
+    "rectangle.jl",
     "polygon2d.jl"
 ]
 

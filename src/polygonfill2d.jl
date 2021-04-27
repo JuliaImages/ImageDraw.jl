@@ -1,32 +1,41 @@
 
 """
-    (f::BoundaryFill)(res::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, x::Int, y::Int, fill_color::T, boundary_color::T) where {T <: Colorant}
+    (f::BoundaryFill)(res::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, x::Int, y::Int, fill_value::T, boundary_value::T) where {T <: Colorant}
 
 """
 
-function (f::BoundaryFill)(res::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, x::Int, y::Int, fill_color::T, boundary_color::T) where {T <: Colorant}
-    if (res[y, x] != f.boundary_color && res[y, x] != f.fill_color)
-        if checkbounds(Bool, res, y, x) res[y, x] = f.fill_color end
-        f(res, verts,  x + 1, y, fill_color, boundary_color)
-        f(res, verts,  x, y + 1, fill_color, boundary_color)
-        f(res, verts,  x - 1, y, fill_color, boundary_color)
-        f(res, verts,  x, y - 1, fill_color, boundary_color)
-    end       
+function (f::BoundaryFill)(
+    res::AbstractArray{T,2},
+    verts::Vector{CartesianIndex{2}},
+    x::Int,
+    y::Int,
+    fill_value::T,
+    boundary_value::T,
+    ) where {T<:Colorant}
+    if checkbounds(Bool, res, y, x)
+        if (res[y, x] != f.boundary_value && res[y, x] != f.fill_value)
+            res[y, x] = f.fill_value
+            f(res, verts, x + 1, y, fill_value, boundary_value)
+            f(res, verts, x, y + 1, fill_value, boundary_value)
+            f(res, verts, x - 1, y, fill_value, boundary_value)
+            f(res, verts, x, y - 1, fill_value, boundary_value)
+        end
+    end
     res
 end
 
 """
-draw!(img::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, f::AbstractPolyFillAlgorithm; connectverts)
+    draw!(img::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, f::AbstractPolyFillAlgorithm; closed::Bool)
 
 Draw on `img` using algorithm `f`.
 
 # Output
 
-When `img` is specified, a copy of `img` is made and changes are made on it and returned.
+When `img` is specified, changes are made on `img` and returned.
 
 # Example
 
-Just simply pass an algorithm with parameters,with image and vertices of polygon
+Just simply pass an algorithm with parameters, with image and vertices of polygon
 
 ```julia
 using ImageDraw
@@ -34,24 +43,29 @@ using ImageDraw
 img = zeros(RGB, 7, 7)
 expected = copy(img)
 expected[2:6, 2:6] .= RGB{N0f8}(1)
-verts = [CartesianIndex(2, 2), CartesianIndex(2, 6), CartesianIndex(6, 6), CartesianIndex(6, 2), CartesianIndex(2,2)]
+verts = [CartesianIndex(2, 2), CartesianIndex(2, 6), CartesianIndex(6, 6), CartesianIndex(6, 2), CartesianIndex(2, 2)]
 
-res = draw!(img, verts, BoundaryFill(x=4, y=4, fill_color=RGB(1), boundary_color=RGB(1)); connectverts=true)
+draw!(img, verts, BoundaryFill(x = 4, y = 4, fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
 ```
 """
-function draw!(img::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, f::AbstractPolyFillAlgorithm;connectverts::Bool = true) where T <: Colorant
-    res = copy(img)
-    if (connectverts == true)
-        for i in 1:length(verts) - 1
-            draw!(res, LineSegment(verts[i], verts[i + 1]), f.fill_color)
-        end	
+function draw!(
+    img::AbstractArray{T,2},
+    verts::Vector{CartesianIndex{2}},
+    f::AbstractPolyFillAlgorithm;
+    closed::Bool = false,
+    ) where {T<:Colorant}
+    if (closed == true)
+        for i = 1:length(verts)-1
+            draw!(img, LineSegment(verts[i], verts[i+1]), f.fill_value)
+        end
     end
-    f(res, verts, f.x, f.y, f.fill_color, f.boundary_color)
+    f(img, verts, f.x, f.y, f.fill_value, f.boundary_value)
 end
 
 
+
 """
-    draw(img::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, f::AbstractPolyFillAlgorithm; connectverts)
+    draw(img::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, f::AbstractPolyFillAlgorithm; closed::Bool)
 
 Draw on `img` using algorithm `f`.
 
@@ -61,7 +75,7 @@ When `img` is specified, a copy of `img` is made and changes are made on it and 
 
 # Example
 
-Just simply pass an algorithm with parameters,with image and vertices of polygon
+Just simply pass an algorithm with parameters, with image and vertices of polygon
 
 ```julia
 using ImageDraw
@@ -69,17 +83,16 @@ using ImageDraw
 img = zeros(RGB, 7, 7)
 expected = copy(img)
 expected[2:6, 2:6] .= RGB{N0f8}(1)
-verts = [CartesianIndex(2, 2), CartesianIndex(2, 6), CartesianIndex(6, 6), CartesianIndex(6, 2), CartesianIndex(2,2)]
+verts = [CartesianIndex(2, 2), CartesianIndex(2, 6), CartesianIndex(6, 6), CartesianIndex(6, 2), CartesianIndex(2, 2)]
 
-draw(img, verts, BoundaryFill(x=4, y=4, fill_color=RGB(1), boundary_color=RGB(1)); connectverts=true)
+res = draw(img, verts, BoundaryFill(x = 4, y = 4, fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
 ```
 """
-function draw(img::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, f::AbstractPolyFillAlgorithm; connectverts::Bool=true) where {T <: Colorant}
-    res = copy(img)
-    if (connectverts == true)
-        for i in 1:length(verts) - 1
-            draw!(res, LineSegment(verts[i], verts[i + 1]), f.boundary_color)
-        end	
-    end
-    f(res, verts, f.x, f.y, f.fill_color, f.boundary_color)
+function draw(
+    img::AbstractArray{T,2},
+    verts::Vector{CartesianIndex{2}},
+    f::AbstractPolyFillAlgorithm;
+    closed::Bool = false,
+    ) where {T<:Colorant}
+    draw!(copy(img), verts, f; closed = closed)
 end
