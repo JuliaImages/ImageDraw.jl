@@ -168,12 +168,12 @@ end
 
 """
     BoundaryFill <: AbstractPolyFillAlgorithm
-    BoundaryFill(x::Int, y::Int, fill_color::T, boundarycolor::T)
+    BoundaryFill(x::Int, y::Int, fill_value::T, boundary_value::T)
 
-    draw(img, verts, BoundaryFill(x, y, fill_color, boundary_color); connectverts)
-    draw!(img, verts, BoundaryFill(x, y, fill_color, boundary_color); connectverts)
+    draw(img, verts, alg::BoundaryFill; closed)
+    draw!(img, verts, alg::BoundaryFill; closed)
 
-Applies Boundary Filling Algortithm on image inside the vertices provided in order
+Applies boundary filling algortithm on image inside the vertices provided in order
 
 # Output
 
@@ -183,17 +183,23 @@ Return the boundary filled image inside the vertices(provided in order).
 
 ## `x` && `y`
 
-Boundary fill is a seeded polygon filling algorithm.So we need to provide the seed (x,y) inside the image.
- // To-do checking if verts and seed are inside the image or note
- 
-## `fill_color`
+Boundary fill is a seeded polygon filling algorithm. 
+So we need to provide the seed point (x,y) inside the image from where the algorithm can start its function.
+// To-do checking if verts and seed are inside the image or note
+
+## `fill_value`
 
 The pixels inside the boundary of vertices of polygon are filled with this colorant parameter.
 
-## `boundary_color`
+## `boundary_value`
 
 The pixels to define the boundary using verts is filled with this colorant parameter. 
-Without this parameter, the whole picture will be filled with the `fill_color`
+Without this parameter, the whole picture will be filled with the `fill_value`
+
+# `closed`
+
+`closed` keyword specifies whether to connect the polygon edges using the verts provided. 
+Edges will be filled and connected using `boundary_value`.
 
 ```julia
 using ImageDraw
@@ -203,22 +209,21 @@ expected = copy(img)
 expected[2:6, 2:6] .= RGB{N0f8}(1)
 verts = [CartesianIndex(2, 2), CartesianIndex(2, 6), CartesianIndex(6, 6), CartesianIndex(6, 2), CartesianIndex(2,2)]
 
-draw(img, verts, BoundaryFill(x=4, y=4, fill_color=RGB(1), boundary_color=RGB(1)); connectverts=true)
-
+draw(img, verts, BoundaryFill(x = 4, y = 4, fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
 ```
 """
 
 struct BoundaryFill{T<:Colorant} <: AbstractPolyFillAlgorithm
-	x::Int
-	y::Int
-	fill_color::T
-    boundary_color::T
-    function BoundaryFill(x::Int, y::Int, fill_color::T, boundary_color::T) where {T<:Colorant}
-        new{T}(x, y, fill_color, boundary_color)
+    x::Int
+    y::Int
+    fill_value::T
+    boundary_value::T
+    function BoundaryFill(x::Int, y::Int, fill_value::T, boundary_value::T) where {T <: Colorant}
+        new{T}(x, y, fill_value, boundary_value)
     end
 end
 
-BoundaryFill(;x::Int=0, y::Int=0, fill_color::Colorant=RGB(1), boundary_color::Colorant=RGB(1)) = BoundaryFill(x, y, fill_color, boundary_color)
+BoundaryFill(;x::Int = 0, y::Int = 0, fill_value::Colorant = RGB(1), boundary_value::Colorant = RGB(1)) = BoundaryFill(x, y, fill_value, boundary_value)
 
 
 """
