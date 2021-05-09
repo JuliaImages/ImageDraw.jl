@@ -185,7 +185,6 @@ Return the boundary filled image inside the vertices(provided in order).
 
 Boundary fill is a seeded polygon filling algorithm. 
 So we need to provide the seed point (x,y) inside the image from where the algorithm can start its function.
-// To-do checking if verts and seed are inside the image or note
 
 ## `fill_value`
 
@@ -207,9 +206,10 @@ using ImageDraw
 img = zeros(RGB, 7, 7)
 expected = copy(img)
 expected[2:6, 2:6] .= RGB{N0f8}(1)
+
 verts = [CartesianIndex(2, 2), CartesianIndex(2, 6), CartesianIndex(6, 6), CartesianIndex(6, 2), CartesianIndex(2,2)]
 
-draw(img, verts, BoundaryFill(x = 4, y = 4, fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
+draw(img, verts, BoundaryFill(4, 4; fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
 ```
 """
 
@@ -223,7 +223,9 @@ struct BoundaryFill{T<:Colorant} <: AbstractPolyFillAlgorithm
     end
 end
 
-BoundaryFill(;x::Int = 0, y::Int = 0, fill_value::Colorant = RGB(1), boundary_value::Colorant = RGB(1)) = BoundaryFill(x, y, fill_value, boundary_value)
+BoundaryFill(x::Int = 1, y::Int = 1; fill_value::Colorant = RGB(1), boundary_value::Colorant = RGB(1)) = BoundaryFill(x, y, fill_value, boundary_value)
+BoundaryFill(p::CartesianIndex{2}; fill_value::Colorant = RGB(1), boundary_value::Colorant = RGB(1)) = BoundaryFill(p[1], p[2], fill_value, boundary_value)
+BoundaryFill(p::Point; fill_value::Colorant = RGB(1), boundary_value::Colorant = RGB(1)) = BoundaryFill(p.y, p.x, fill_value, boundary_value)
 
 
 """
