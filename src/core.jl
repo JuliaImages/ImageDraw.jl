@@ -209,7 +209,7 @@ expected[2:6, 2:6] .= RGB{N0f8}(1)
 
 verts = [CartesianIndex(2, 2), CartesianIndex(2, 6), CartesianIndex(6, 6), CartesianIndex(6, 2), CartesianIndex(2,2)]
 
-draw(img, verts, BoundaryFill(4, 4; fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
+fill_method = draw(img, verts, BoundaryFill(4, 4; fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
 ```
 """
 
@@ -223,10 +223,9 @@ struct BoundaryFill{T<:Colorant} <: AbstractPolyFillAlgorithm
     end
 end
 
-BoundaryFill(x::Int = 1, y::Int = 1; fill_value::Colorant = RGB(1), boundary_value::Colorant = RGB(1)) = BoundaryFill(x, y, fill_value, boundary_value)
-BoundaryFill(p::CartesianIndex{2}; fill_value::Colorant = RGB(1), boundary_value::Colorant = RGB(1)) = BoundaryFill(p[1], p[2], fill_value, boundary_value)
-BoundaryFill(p::Point; fill_value::Colorant = RGB(1), boundary_value::Colorant = RGB(1)) = BoundaryFill(p.y, p.x, fill_value, boundary_value)
-
+BoundaryFill(x::Int = 1, y::Int = 1; fill_value::Colorant = RGB(1), boundary_value::Colorant = fill_value) = BoundaryFill(x, y, fill_value, boundary_value)
+BoundaryFill(p::CartesianIndex{2}; fill_value::Colorant = RGB(1), boundary_value::Colorant = fill_value) = BoundaryFill(p[1], p[2], fill_value, boundary_value)
+BoundaryFill(p::Point; fill_value::Colorant = RGB(1), boundary_value::Colorant = fill_value) = BoundaryFill(p.y, p.x, fill_value, boundary_value)
 
 """
     rectangle = RectanglePoints(p1, p2)

@@ -102,11 +102,22 @@
     
     # cases when initial point is outside image domain
     img = zeros(RGB, 7, 7)
-    err = DomainError((0, 4),"Seed (0, 4) outside the image array domain")
-    @test_throws err draw(img, verts, BoundaryFill(0, 4; fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
+    @test_throws BoundsError draw(img, verts, BoundaryFill(0, 4; fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
 
     img = zeros(RGB, 7, 7)
-    err = DomainError((4, 9),"Seed (4, 9) outside the image array domain")
-    @test_throws err draw!(img, verts, BoundaryFill(4, 9; fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
+    @test_throws BoundsError draw!(img, verts, BoundaryFill(4, 9; fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
+
+    # cases without boundary_value and fill value = RGB(0, 1, 0)
+    img = zeros(RGB,7,7)
+    expected = copy(img)
+    expected[2:6, 2:6] .= RGB(0, 1, 0)
+    res = @inferred draw(img, verts, BoundaryFill(4, 4; fill_value = RGB(0, 1, 0)); closed = true)
+    @test all(expected .== res) == true
+
+    img = zeros(RGB,7,7)
+    expected = copy(img)
+    expected[:,:] .= RGB(0, 1, 0)
+    res = @inferred draw!(img, verts, BoundaryFill(4, 4; fill_value = RGB(0, 1, 0)); closed = false)
+    @test all(expected .== res) == true
 
 end

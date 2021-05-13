@@ -56,11 +56,10 @@ function draw!(
     ) where N
 
     # Boundscheck for verts
-    @boundscheck a = map(x -> (checkbounds(Bool, img, x[1], x[2]) ? nothing : throw(DomainError(x, "Vertice $x outside the image array domain"))), verts)
-
+    @boundscheck map(x -> (checkbounds(Bool, img, x[1], x[2]) ? nothing : throw(DomainError(x, "Vertice $x outside the image array domain"))), verts)
     # Boundscheck for seed point
-    @boundscheck checkbounds(Bool, img, f.x, f.y) ? nothing : throw(DomainError((f.x, f.y),"Seed ($(f.x), $(f.y)) outside the image array domain"));
-
+    @boundscheck checkbounds(img, f.x, f.y)
+    
     if (closed == true)
         for i = 1:length(verts)-1
             draw!(img, LineSegment(verts[i], verts[i+1]), f.fill_value)
