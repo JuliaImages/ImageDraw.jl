@@ -4,6 +4,15 @@ Type representing any object drawable on image
 abstract type Drawable end
 
 """
+Root type for the polygon filling algorithm in `ImageDraw` packages
+
+Any concrete polygon filling algorithm shall subtype it to support 
+`draw` and `draw!` APIs.
+
+"""
+abstract type AbstractPolyFillAlgorithm end
+
+"""
     p = Point(x,y)
     p = Point(c)
 
@@ -154,6 +163,67 @@ consecutive points in `[vertex]` along with the first and last point.
 struct Polygon <: Drawable
     vertices::Vector{Point}
 end
+
+"""
+    BoundaryFill <: AbstractPolyFillAlgorithm
+    BoundaryFill(x::Int, y::Int, fill_value::T, boundary_value::T)
+
+    draw(img, verts, alg::BoundaryFill; closed)
+    draw!(img, verts, alg::BoundaryFill; closed)
+
+Applies boundary filling algortithm on image inside the vertices provided in order
+
+# Output
+
+Return the boundary filled image inside the vertices(provided in order). 
+
+# Arguments
+
+## `x` && `y`
+
+Boundary fill is a seeded polygon filling algorithm. 
+So we need to provide the seed point (x,y) inside the image from where the algorithm can start its function.
+
+## `fill_value`
+
+The pixels inside the boundary of vertices of polygon are filled with this colorant parameter.
+
+## `boundary_value`
+
+The pixels to define the boundary using verts is filled with this colorant parameter. 
+Without this parameter, the whole picture will be filled with the `fill_value`
+
+# `closed`
+
+`closed` keyword specifies whether to connect the polygon edges using the verts provided. 
+Edges will be filled and connected using `boundary_value`.
+
+```julia
+using ImageDraw
+
+img = zeros(RGB, 7, 7)
+expected = copy(img)
+expected[2:6, 2:6] .= RGB{N0f8}(1)
+
+verts = [CartesianIndex(2, 2), CartesianIndex(2, 6), CartesianIndex(6, 6), CartesianIndex(6, 2), CartesianIndex(2,2)]
+
+fill_method = draw(img, verts, BoundaryFill(4, 4; fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
+```
+"""
+
+struct BoundaryFill{T<:Colorant} <: AbstractPolyFillAlgorithm
+    x::Int
+    y::Int
+    fill_value::T
+    boundary_value::T
+    function BoundaryFill(x::Int, y::Int, fill_value::T, boundary_value::T) where {T <: Colorant}
+        new{T}(x, y, fill_value, boundary_value)
+    end
+end
+
+BoundaryFill(x::Int = 1, y::Int = 1; fill_value::Colorant = RGB(1), boundary_value::Colorant = fill_value) = BoundaryFill(x, y, fill_value, boundary_value)
+BoundaryFill(p::CartesianIndex{2}; fill_value::Colorant = RGB(1), boundary_value::Colorant = fill_value) = BoundaryFill(p[1], p[2], fill_value, boundary_value)
+BoundaryFill(p::Point; fill_value::Colorant = RGB(1), boundary_value::Colorant = fill_value) = BoundaryFill(p.y, p.x, fill_value, boundary_value)
 
 """
     rectangle = RectanglePoints(p1, p2)
