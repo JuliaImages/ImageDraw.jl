@@ -1,8 +1,8 @@
 #Ellipse methods
 
-Ellipse(x::Int, y::Int, ρx::T, ρy::U; thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real} = Ellipse{T, U}(Point(x,y), ρx, ρy, thickness, fill)
-Ellipse(p::CartesianIndex{2}, ρx::T, ρy::U; thickness::Int = 0, fill::Bool = true) where {T<:Real, U<:Real} = Ellipse{T, U}(Point(p), ρx, ρy, thickness, fill)
-Ellipse(circle::CirclePointRadius) = Ellipse(circle.center, circle.ρ, circle.ρ;  thickness = circle.thickness, fill = circle.fill)
+Ellipse(x::Int, y::Int, args...; kwargs...) = Ellipse(Point(x,y), args...; kwargs...)
+Ellipse(p::CartesianIndex{2}, args...; kwargs...) = Ellipse(Point(p), args...; kwargs...)
+Ellipse(circle::CirclePointRadius) = Ellipse(circle.center, circle.ρ, circle.ρ; thickness = circle.thickness, fill = circle.fill)
 
 function draw!(img::AbstractArray{T, 2}, ellipse::Ellipse, color::T) where T<:Colorant
 	ys = Int[]
