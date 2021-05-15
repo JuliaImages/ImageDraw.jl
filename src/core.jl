@@ -226,6 +226,29 @@ BoundaryFill(p::CartesianIndex{2}; fill_value::Colorant = RGB(1), boundary_value
 BoundaryFill(p::Point; fill_value::Colorant = RGB(1), boundary_value::Colorant = fill_value) = BoundaryFill(p.y, p.x, fill_value, boundary_value)
 
 """
+    FloodFill{T<:Colorant} <: AbstractPolyFillAlgorithm
+    FloodFill( x::Int, y::Int, fill_value::T, boundary_value::T)
+
+    draw(img, verts, alg::FloodFill; closed)
+    draw!(img, verts, alg::FloodFill; closed)
+"""
+struct FloodFill{T<:Colorant} <: AbstractPolyFillAlgorithm
+    x::Int
+    y::Int
+    fill_value::T
+    current_value::T
+    function FloodFill(x::Int, y::Int, fill_value::T, current_value::T) where {T <: Colorant}
+        new{T}(x, y, fill_value, current_value)
+    end
+
+end
+
+FloodFill(x::Int = 1, y::Int = 1; fill_value::Colorant = RGB(1), current_value::Colorant = fill_value) = FloodFill(x, y, fill_value, current_value)
+FloodFill(p::CartesianIndex{2}; fill_value::Colorant = RGB(1), current_value::Colorant = fill_value) = FloodFill(p[1], p[2], fill_value, current_value)
+FloodFill(p::Point; fill_value::Colorant = RGB(1), current_value::Colorant = fill_value) = FloodFill(p.y, p.x, fill_value, current_value)
+
+
+"""
     rectangle = RectanglePoints(p1, p2)
     rectangle = RectanglePoints(x1, y1, x2, y2)
 

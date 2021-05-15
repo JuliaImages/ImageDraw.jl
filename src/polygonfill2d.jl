@@ -23,6 +23,30 @@ function (f::BoundaryFill)(
 end
 
 """
+    (f::FloodFill)(res::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, x::Int, y::Int, fill_value::T, boundary_value::T) where {T <: Colorant}
+
+"""
+
+function (f::FloodFill)(
+    res::AbstractArray{T,2},
+    verts::Vector{CartesianIndex{2}},
+    x::Int,
+    y::Int,
+    ) where {T<:Colorant}
+    # current_color = res[f.y, f.x]
+    if checkbounds(Bool, res, y, x)
+        if (res[y, x] != f.current_value || res[y, x] == f.fill_value) return end
+        res[y, x] = f.fill_value
+        f(res, verts, x + 1, y)
+        f(res, verts, x, y + 1)
+        f(res, verts, x - 1, y)
+        f(res, verts, x, y - 1)
+    end
+
+    res
+end
+
+"""
     draw!(img::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, f::AbstractPolyFillAlgorithm; closed::Bool)
 
 Draw on `img` using algorithm `f`.
