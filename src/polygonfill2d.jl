@@ -33,16 +33,12 @@ function (f::FloodFill)(
     x::Int,
     y::Int,
     ) where {T<:Colorant}
-    # current_color = res[f.y, f.x]
-    if checkbounds(Bool, res, y, x)
-        if (res[y, x] != f.current_value || res[y, x] == f.fill_value) return end
-        res[y, x] = f.fill_value
-        f(res, verts, x + 1, y)
-        f(res, verts, x, y + 1)
-        f(res, verts, x - 1, y)
-        f(res, verts, x, y - 1)
-    end
-
+    if (res[y, x] != f.current_value || res[y, x] == f.fill_value) return end
+    if checkbounds(Bool, res, y, x) res[y, x] = f.fill_value end
+    f(res, verts, x + 1, y)
+    f(res, verts, x - 1, y)
+    f(res, verts, x, y + 1)
+    f(res, verts, x, y - 1)
     res
 end
 

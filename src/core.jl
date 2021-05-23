@@ -231,6 +231,8 @@ BoundaryFill(p::Point; fill_value::Colorant = RGB(1), boundary_value::Colorant =
 
     draw(img, verts, alg::FloodFill; closed)
     draw!(img, verts, alg::FloodFill; closed)
+
+
 """
 struct FloodFill{T<:Colorant} <: AbstractPolyFillAlgorithm
     x::Int
