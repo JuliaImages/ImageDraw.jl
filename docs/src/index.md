@@ -1,4 +1,4 @@
-# ImageDraw.jl Documentation
+# ImageDraw.jl
 
 A drawing package for JuliaImages
 
