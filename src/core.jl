@@ -340,6 +340,7 @@ Draws a single point after checkbounds() for coordinate in the image.
 Color Defaults to oneunit(T)
 
 """
+drawifinbounds!
 
 drawifinbounds!(img::AbstractArray{T,2}, p::Point, color::T = oneunit(T)) where {T<:Colorant} = drawifinbounds!(img, p.y, p.x, color)
 drawifinbounds!(img::AbstractArray{T,2}, p::CartesianIndex{2}, color::T = oneunit(T)) where {T<:Colorant} = drawifinbounds!(img, Point(p), color)
