@@ -74,7 +74,7 @@ with keyword arguments `thickness` and `fill` for drawing hollow circle
 
 # Examples
 ```
-using ImageDraw,TestImages,ImageView, ColorVectorSpace
+using ImageDraw, TestImages, ImageView, ColorVectorSpace
 img = testimage("lighthouse")
 
 draw!(img, Ellipse(CirclePointRadius(350,200,100))) 
@@ -118,7 +118,7 @@ struct Path <: Drawable
 end
 
 """
-    ellipse = Ellipse(center, ρx, ρy; thickness = 0,fill = false)
+    ellipse = Ellipse(center, ρx, ρy; thickness=0, fill=false)
 
 A `Drawable` ellipse with center `center` and parameters `ρx` and `ρy`
 with keyword arguments `thickness` and `fill` for drawing hollow ellipse
@@ -134,7 +134,7 @@ img = testimage("lighthouse")
 
 draw(img, Ellipse(5, 5, 5, 5), Gray{N0f8}(0.5))
 draw(img, Ellipse(CartesianIndex(5,5), 5, 3))
-draw(img, Ellipse(CirclePointRadius(Point(6, 6), 5; thickness = 4, fill = false)))
+draw(img, Ellipse(CirclePointRadius(Point(6, 6), 5; thickness=4, fill=false)))
 ```
 """
 
