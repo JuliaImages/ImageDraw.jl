@@ -23,8 +23,8 @@ function generate_logo()
     p_5 = Point(116,97)
 
     # Define path
-    path_dark = "docs/src/assets/logo-dark.png"
-    path_light = "docs/src/assets/logo.png"
+    path_dark = joinpath(@__DIR__, "src", "assets", "logo-dark.png")
+    path_light = joinpath(@__DIR__, "src", "assets", "logo.png")
 
     for (img,gray,name) in ((img_dark,gray_light,path_dark), (img_light,gray_dark,path_light))
         draw!(img, LineTwoPoints(p_1,p_2), gray)
