@@ -1,6 +1,6 @@
 function generate_logo()
     # Load original image (from https://github.com/JuliaImages/juliaimages.github.io/blob/source/docs/src/assets/logo.png)
-    img = load("docs/logo_original.png")
+    img = load(joinpath(@__DIR__, "logo_original.png"))
 
     # Define some colors
     c_red, c_green, c_blue, c_purple = RGBA.([Colors.JULIA_LOGO_COLORS...])
