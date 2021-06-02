@@ -74,3 +74,48 @@ save("images/lighthouse_cross.png", img) # hide
 <img src="images/lighthouse_cross.png" width="512px" alt="edge detection demo 1 image" />
 <p>
 ```
+
+Filling Polygon with Boundary Fill Algorithm
+
+```@example usage
+using TestImages, ImageDraw, ColorVectorSpace
+using FileIO # hide
+img1 = testimage("lighthouse")
+img2 = testimage("lighthouse")
+
+draw!(img1, Ellipse(CirclePointRadius(400, 200, 100; thickness = 50, fill = false)))
+draw!(img1, Polygon(RectanglePoints(Point(10, 10), Point(100, 100))), RGB{N0f8}(1))
+
+verts = [CartesianIndex(1, 1)]
+
+draw!(img2, Ellipse(CirclePointRadius(400, 200, 100; thickness = 50, fill = false)))
+draw!(img2, verts, BoundaryFill(400, 200; fill_value = RGB(0), boundary_value = RGB(1)); closed = false)
+
+draw!(img2, Polygon(RectanglePoints(Point(10, 10), Point(100, 100))), RGB{N0f8}(1))
+draw!(img2, verts, BoundaryFill(50, 50; fill_value = RGB(0), boundary_value = RGB(1)); closed = false)
+
+mosaicview(img1, img2; nrow=1)
+```
+
+Filling Polygon using Flood Fill Algorithm
+
+```@example usage
+using TestImages, ImageDraw, ColorVectorSpace
+using FileIO # hide
+img1 = testimage("lighthouse")
+img2 = testimage("lighthouse")
+
+draw!(img1, Ellipse(CirclePointRadius(400, 200, 100; thickness = 50, fill = false)))
+draw!(img1, Polygon(RectanglePoints(Point(10, 10), Point(100, 100))), RGB{N0f8}(1))
+
+verts = [CartesianIndex(1, 1)]
+
+draw!(img2, Polygon(RectanglePoints(Point(10, 10), Point(100, 100))), RGB{N0f8}(1))
+draw!(img2, verts, FloodFill(10, 10; fill_value = RGB(0.0), current_value = RGB(1.0)); closed = false)
+
+draw!(img2, Ellipse(CirclePointRadius(400, 200, 100; thickness = 50, fill = false)))
+draw!(img2, verts, FloodFill(320, 200; fill_value = RGB(0.0), current_value = RGB(1.0)); closed = false)
+
+mosaicview(img1, img2; nrow=1)
+
+```

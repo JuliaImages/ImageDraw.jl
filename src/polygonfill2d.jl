@@ -5,7 +5,7 @@
 """
 
 function (f::BoundaryFill)(
-    res::AbstractArray{T, N},
+    res::AbstractArray{T, 2},
     verts::Vector{CartesianIndex{N}},
     x::Int,
     y::Int,
@@ -28,7 +28,7 @@ end
 """
 
 function (f::FloodFill)(
-    res::AbstractArray{T, N},
+    res::AbstractArray{T, 2},
     verts::Vector{CartesianIndex{N}},
     x::Int,
     y::Int,
