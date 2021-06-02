@@ -210,7 +210,6 @@ verts = [CartesianIndex(2, 2), CartesianIndex(2, 6), CartesianIndex(6, 6), Carte
 fill_method = draw(img, verts, BoundaryFill(4, 4; fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
 ```
 """
-
 struct BoundaryFill{T<:Colorant} <: AbstractPolyFillAlgorithm
     x::Int
     y::Int
