@@ -3,7 +3,6 @@
     (f::BoundaryFill)(res::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, x::Int, y::Int, fill_value::T, boundary_value::T) where {T <: Colorant}
 
 """
-
 function (f::BoundaryFill)(
     res::AbstractArray{T,2},
     verts::Vector{CartesianIndex{2}},
@@ -47,7 +46,6 @@ verts = [CartesianIndex(2, 2), CartesianIndex(2, 6), CartesianIndex(6, 6), Carte
 draw!(img, verts, BoundaryFill(4, 4; fill_value = RGB(1), boundary_value = RGB(1)); closed = true)
 ```
 """
-
 function draw!(
     img::AbstractArray{<:Colorant,N},
     verts::Vector{CartesianIndex{N}},
