@@ -1,5 +1,8 @@
-using Documenter, ImageDraw
+using Documenter, Images, ImageDraw
 
-makedocs(sitename="Documentation",
+include("logo.jl")
+generate_logo()
+
+makedocs(sitename="ImageDraw.jl",
             format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"))
 deploydocs(repo = "github.com/JuliaImages/ImageDraw.jl.git")

@@ -3,3 +3,7 @@
 *.jl.mem
 Manifest.toml
 /docs/build
+
+# automatically generated logo
+/docs/src/assets/logo.png
+/docs/src/assets/logo-dark.png
