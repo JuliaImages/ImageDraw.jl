@@ -162,6 +162,9 @@ consecutive points in `[vertex]` along with the first and last point.
 """
 struct Polygon <: Drawable
     vertices::Vector{Point}
+    fill::Bool
+
+    Polygon(vertices::Vector{Point}; fill::Bool = false) = new(vertices, fill)
 end
 
 """

@@ -13,13 +13,50 @@ end
 
 #Polygon methods
 
-Polygon(v::AbstractVector{Tuple{Int, Int}}) = Polygon([Point(p...) for p in v])
-Polygon(v::AbstractVector{CartesianIndex{2}}) = Polygon([Point(p) for p in v])
-Polygon(rectangle::RectanglePoints) = Polygon([rectangle.p1, Point(rectangle.p2.x, rectangle.p1.y), rectangle.p2, Point(rectangle.p1.x, rectangle.p2.y)])
+Polygon(v::AbstractVector{Tuple{Int, Int}}; fill::Bool = false) = Polygon([Point(p...) for p in v]; fill = fill)
+Polygon(v::AbstractVector{CartesianIndex{2}}; fill::Bool = false) = Polygon([Point(p) for p in v]; fill = fill)
+Polygon(rectangle::RectanglePoints; fill::Bool = false) = Polygon([rectangle.p1, Point(rectangle.p2.x, rectangle.p1.y), rectangle.p2, Point(rectangle.p1.x, rectangle.p2.y)]; fill = fill)
 
 function draw!(img::AbstractArray{T, 2}, polygon::Polygon, color::T) where T<:Colorant
     draw!(img, Path(polygon.vertices), color)
     draw!(img, LineSegment(first(polygon.vertices), last(polygon.vertices)), color)
+
+    if polygon.fill
+        polygonscanfill!(img, polygon, color)
+    end
+
+    img
+end
+
+function polygonscanfill!(img::AbstractArray{T, 2}, polygon::Polygon, color::T) where T <: Colorant
+    image_height, image_width = size(img)
+    vertices = polygon.vertices
+
+    vertices_y = map((v) -> v.y, vertices)
+    scan_range = (max(floor(Int, minimum(vertices_y)), 1), min(ceil(Int, maximum(vertices_y)), image_height))
+
+    vertices_shifted = push!(vertices[begin + 1:end], vertices[begin])
+    intersections_x = Vector{Int}()
+
+    for y in scan_range[1]:scan_range[2]
+        for (vertex_a, vertex_b) in zip(vertices, vertices_shifted)
+            if vertex_a.y < y && vertex_b.y >= y || vertex_b.y < y && vertex_a.y >= y
+                push!(intersections_x, round(Int, vertex_a.x + (y - vertex_a.y) / (vertex_b.y - vertex_a.y) * (vertex_b.x - vertex_a.x)))
+            end
+        end
+
+        sort!(intersections_x)
+
+        for i in 1:2:length(intersections_x)
+            if checkbounds(Bool, img, y, intersections_x[i]) || checkbounds(Bool, img, y, intersections_x[i + 1])
+                img[y, max(intersections_x[i], 1):min(intersections_x[i + 1], image_width)] .= color
+            end
+        end
+
+        empty!(intersections_x)
+    end
+
+    img
 end
 
 #RegularPolygon methods
