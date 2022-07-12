@@ -33,12 +33,12 @@ function polygonscanfill!(img::AbstractArray{T, 2}, polygon::Polygon, color::T) 
     vertices = polygon.vertices
 
     vertices_y = map((v) -> v.y, vertices)
-    scan_range = (max(floor(Int, minimum(vertices_y)), 1), min(ceil(Int, maximum(vertices_y)), image_height))
+    scan_range = max(floor(Int, minimum(vertices_y)), 1):min(ceil(Int, maximum(vertices_y)), image_height)
 
     vertices_shifted = push!(vertices[begin + 1:end], vertices[begin])
     intersections_x = Vector{Int}()
 
-    for y in scan_range[1]:scan_range[2]
+    for y in scan_range
         for (vertex_a, vertex_b) in zip(vertices, vertices_shifted)
             if vertex_a.y < y && vertex_b.y >= y || vertex_b.y < y && vertex_a.y >= y
                 push!(intersections_x, round(Int, vertex_a.x + (y - vertex_a.y) / (vertex_b.y - vertex_a.y) * (vertex_b.x - vertex_a.x)))
