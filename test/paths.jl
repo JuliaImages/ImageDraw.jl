@@ -39,6 +39,20 @@ using Test
     @test all(x->x==true, img[3,1:3])==true
     @test all(x->x==false, img[2,2:3])==true
     @test img[2,4]==true
+
+    # filled polygon
+    img = @inferred draw(zeros(Gray{Bool},5,5), Polygon(poly_tuples; fill = true))
+    @test all(x->x==true, img[1,:])==true
+    @test all(x->x==true, img[2,1:4])==true
+    @test all(x->x==true, img[3,1:3])==true
+
+    poly_tuples = [(1,1),(5,5),(5,1),(1,5)]
+    img = @inferred draw(zeros(Gray{Bool},5,5), Polygon(poly_tuples; fill = true))
+    @test all(x->x==true, img[:,1])==true
+    @test all(x->x==true, img[2:4,2])==true
+    @test img[3, 3]==true
+    @test all(x->x==true, img[2:4,4])==true
+    @test all(x->x==true, img[:,5])==true
 end
 
 @testset "Path" begin
