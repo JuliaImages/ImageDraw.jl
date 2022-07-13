@@ -53,6 +53,11 @@ using Test
     @test img[3, 3]==true
     @test all(x->x==true, img[2:4,4])==true
     @test all(x->x==true, img[:,5])==true
+
+    poly_tuples_outside_image = [(-1, 2), (3, 6), (7, 2)]
+    img = @inferred draw(zeros(Gray{Bool},5,5), Polygon(poly_tuples_outside_image; fill = true))
+    @test all(x->x==true, img[2:3,:])==true
+    @test all(x->x==true, img[5,2:3])==true
 end
 
 @testset "Path" begin

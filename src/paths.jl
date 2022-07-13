@@ -33,7 +33,7 @@ function polygonscanfill!(img::AbstractArray{T, 2}, polygon::Polygon, color::T) 
     vertices = polygon.vertices
 
     vertices_y = map((v) -> v.y, vertices)
-    scan_range = max(floor(Int, minimum(vertices_y)), 1):min(ceil(Int, maximum(vertices_y)), image_height)
+    scan_range = clamp(floor(Int, minimum(vertices_y)), 1, image_height):clamp(ceil(Int, maximum(vertices_y)), 1, image_height)
 
     vertices_shifted = push!(vertices[begin + 1:end], vertices[begin])
     intersections_x = Vector{Int}()
@@ -48,8 +48,12 @@ function polygonscanfill!(img::AbstractArray{T, 2}, polygon::Polygon, color::T) 
         sort!(intersections_x)
 
         for i in 1:2:length(intersections_x)
-            if checkbounds(Bool, img, y, intersections_x[i]) || checkbounds(Bool, img, y, intersections_x[i + 1])
-                img[y, max(intersections_x[i], 1):min(intersections_x[i + 1], image_width)] .= color
+            x1, x2 = intersections_x[i], intersections_x[i + 1]
+
+            if !(x2 < 1 || x1 > image_width)
+                x1, x2 = clamp(x1, 1, image_width), clamp(x2, 1, image_width)
+
+                img[y, x1:x2] .= color
             end
         end
 
