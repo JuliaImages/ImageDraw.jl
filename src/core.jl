@@ -16,7 +16,9 @@ abstract type AbstractPolyFillAlgorithm end
     p = Point(x,y)
     p = Point(c)
 
-A `Drawable` point on the image
+A `Drawable` point on the image. 
+
+Note that while the `x` and `y` in `Point(x,y)` stand to mean the `x` and `y` pixel-distances from the left-top corner of the image respectively, the first and second elements in a CartesianIndex (i.e. `Point(c)`) will mean the opposite (`y` and `x` distances respectively).
 """
 struct Point <: Drawable
     x::Int
