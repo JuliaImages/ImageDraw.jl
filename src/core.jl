@@ -153,10 +153,11 @@ end
 Ellipse(center::Point, ρx::T, ρy::U; kwargs...) where {T<:Real, U<:Real} = Ellipse{T,U}(center, ρx, ρy; kwargs...)
 
 """ 
-    polygon = Polygon([vertex])
+    polygon = Polygon([vertex]; fill=false)
 
 A `Drawable` polygon i.e. a closed path created by joining the
 consecutive points in `[vertex]` along with the first and last point.
+The keyword argument `fill` allows to draw filled areas enclosed by the closed path.
 !!! note
     This will create a closed path. For a non-closed path, see `Path`
 """
