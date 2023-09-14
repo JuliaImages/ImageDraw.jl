@@ -46,6 +46,10 @@ using Test
     @test all(x->x==true, img[2,1:4])==true
     @test all(x->x==true, img[3,1:3])==true
 
+    @test img[2,5]==false
+    @test all(x->x==false, img[3,4:5])==true
+    @test all(x->x==false, img[4:5,:])==true
+
     poly_tuples = [(1,1),(5,5),(5,1),(1,5)]
     img = @inferred draw(zeros(Gray{Bool},5,5), Polygon(poly_tuples; fill = true))
     @test all(x->x==true, img[:,1])==true
@@ -53,11 +57,18 @@ using Test
     @test img[3, 3]==true
     @test all(x->x==true, img[2:4,4])==true
     @test all(x->x==true, img[:,5])==true
+    
+    @test all(x->x==false, img[1,2:4])==true
+    @test all(x->x==false, (img[2,3], img[4,3]))==true
+    @test all(x->x==false, img[5,2:4])==true
 
     poly_tuples_outside_image = [(-1, 2), (3, 6), (7, 2)]
     img = @inferred draw(zeros(Gray{Bool},5,5), Polygon(poly_tuples_outside_image; fill = true))
-    @test all(x->x==true, img[2:3,:])==true
+    @test all(x->x==true, img[2:4,:])==true
     @test all(x->x==true, img[5,2:3])==true
+
+    @test all(x->x==false, img[1,:])==true
+    @test all(x->x==false, (img[5,1], img[5,5]))==true
 end
 
 @testset "Path" begin
