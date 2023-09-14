@@ -29,11 +29,11 @@ function draw!(img::AbstractArray{T, 2}, polygon::Polygon, color::T) where T<:Co
 end
 
 function polygonscanfill!(img::AbstractArray{T, 2}, polygon::Polygon, color::T) where T <: Colorant
-    image_height, image_width = size(img)
+    image_height_indices, image_width_indices = axes(img)
     vertices = polygon.vertices
 
     vertices_y = map((v) -> v.y, vertices)
-    scan_range = clamp(floor(Int, minimum(vertices_y)), 1, image_height):clamp(ceil(Int, maximum(vertices_y)), 1, image_height)
+    scan_range = range(clamp.((floor(Int, minimum(vertices_y)), ceil(Int, maximum(vertices_y))), first(image_height_indices), last(image_height_indices))...)
 
     vertices_shifted = push!(vertices[2:length(vertices)], vertices[1])
     intersections_x = Vector{Int}()
@@ -50,8 +50,8 @@ function polygonscanfill!(img::AbstractArray{T, 2}, polygon::Polygon, color::T) 
         for i in 1:2:length(intersections_x)
             x1, x2 = intersections_x[i], intersections_x[i + 1]
 
-            if !(x2 < 1 || x1 > image_width)
-                x1, x2 = clamp(x1, 1, image_width), clamp(x2, 1, image_width)
+            if !(x2 < first(image_width_indices) || x1 > last(image_width_indices))
+                x1, x2 = clamp.((x1, x2), first(image_width_indices), last(image_width_indices))
 
                 img[y, x1:x2] .= color
             end
