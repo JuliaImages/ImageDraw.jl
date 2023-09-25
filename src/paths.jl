@@ -58,7 +58,7 @@ function fill_polygon!(img::AbstractArray{T, 2}, polygon::Polygon, fill_color::T
     if inside_point === nothing
         return img
     end
-    inside_point_x, inside_point_y = Tuple(inside_point)
+    inside_point_y, inside_point_x = Tuple(inside_point)
     foreach_point_within_border(fill_buffer, border_marker, inside_point_x, inside_point_y) do x, y
         draw!(img, Point(x, y), fill_color, opacity=fill_opacity)
     end

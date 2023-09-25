@@ -46,6 +46,15 @@
     res = @inferred draw(img, Polygon(verts), RGB{N0f8}(1), fill_color = RGB{N0f8}(0.5))
     @test all(expected .== res) == true
 
+    # Test that axis are not accidentally swapped
+
+    verts = [CartesianIndex(2, 3), CartesianIndex(2, 6), CartesianIndex(6, 6), CartesianIndex(6, 3)]
+
+    expected = copy(img)
+    expected[2:6, 3:6] .= RGB{N0f8}(1)
+    res = @inferred draw(img, Polygon(verts), RGB{N0f8}(1), fill_color = RGB{N0f8}(1))
+    @test all(expected .== res) == true
+
     # cases when verts are outside the domain
     verts = [CartesianIndex(4, 4), CartesianIndex(4, 8), CartesianIndex(8, 8), CartesianIndex(8, 4), CartesianIndex(4, 4)]
 
