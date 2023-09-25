@@ -31,6 +31,21 @@
     res = @inferred draw(img, Polygon(verts), RGB{N0f8}(1), opacity = 0.5, fill_color = RGB{N0f8}(1), fill_opacity = 0.75)
     @test all(expected .== res) == true
 
+    # Test that the order of the vertices doesn't matter
+
+    verts = reverse(verts)
+
+    expected = copy(img)
+    expected[2:6, 2:6] .= RGB{N0f8}(1)
+    res = @inferred draw(img, Polygon(verts), RGB{N0f8}(1), fill_color = RGB{N0f8}(1))
+    @test all(expected .== res) == true
+
+    expected = copy(img)
+    expected[2:6, 2:6] .= RGB{N0f8}(1)
+    expected[3:5, 3:5] .= RGB{N0f8}(0.5)
+    res = @inferred draw(img, Polygon(verts), RGB{N0f8}(1), fill_color = RGB{N0f8}(0.5))
+    @test all(expected .== res) == true
+
     # cases when verts are outside the domain
     verts = [CartesianIndex(4, 4), CartesianIndex(4, 8), CartesianIndex(8, 8), CartesianIndex(8, 4), CartesianIndex(4, 4)]
 

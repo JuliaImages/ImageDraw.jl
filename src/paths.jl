@@ -36,18 +36,15 @@ end
 
 function is_inside_polygon(x::Int, y::Int, vertices::AbstractVector{Point})
     vertices = [[p.y, p.x] for p in vertices]
-    test_point = [y, x]
-    total_sign = 0
-    num_degenerate_edges = 0
+    winding_number = 0
     for (start_point, end_point) in zip(vertices, circshift(vertices, -1))
-        direction = end_point - start_point
-        normal = [-direction[2], direction[1]]
-        if normal == [0, 0]
-            num_degenerate_edges += 1
+        max_x = maximum([start_point[2], end_point[2]])
+        min_y, max_y = extrema([start_point[1], end_point[1]])
+        if x < max_x && min_y < y < max_y
+            winding_number += sign(end_point[1] - start_point[1])
         end
-        total_sign += sign(dot(normal, test_point - start_point))
     end
-    abs(total_sign) + num_degenerate_edges == length(vertices)
+    winding_number != 0
 end
 
 
