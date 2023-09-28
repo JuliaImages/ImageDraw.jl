@@ -1,7 +1,7 @@
 module ImageDraw
 
 # package code goes here
-using ImageCore, Distances
+using ImageCore, Distances, ColorVectorSpace
 
 include("core.jl")
 include("line2d.jl")
@@ -10,7 +10,7 @@ include("circle2d.jl")
 include("paths.jl")
 include("cross.jl")
 include("rectangle.jl")
-include("polygonfill2d.jl")
+
 
 #export methods
 export

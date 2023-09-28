@@ -14,7 +14,7 @@ using LinearAlgebra
     @test all(img .== expected) == true
 
     img = zeros(Gray{N0f8}, 3, 3)
-    @inferred draw!(img, points, [Gray{N0f8}(0.8)])
+    @inferred draw!(img, points, [Gray{N0f8}(0.8)], opacities=[1.0])
     expected = Matrix(Diagonal([0.8,1,1]))
     @test all(img .== expected) == true
 

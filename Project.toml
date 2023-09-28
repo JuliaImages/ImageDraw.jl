@@ -1,8 +1,9 @@
 name = "ImageDraw"
 uuid = "4381153b-2b60-58ae-a1ba-fd683676385f"
-version = "0.2.6"
+version = "0.3.0"
 
 [deps]
+ColorVectorSpace = "c3611d14-8923-5661-9e6a-0046d554d3a4"
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
 ImageCore = "a09fc81d-aa75-5fe9-8630-4744c3626534"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
