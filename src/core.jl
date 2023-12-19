@@ -231,6 +231,79 @@ BoundaryFill(p::CartesianIndex{2}; fill_value::Colorant = RGB(1), boundary_value
 BoundaryFill(p::Point; fill_value::Colorant = RGB(1), boundary_value::Colorant = fill_value) = BoundaryFill(p.y, p.x, fill_value, boundary_value)
 
 """
+    FloodFill{T<:Colorant} <: AbstractPolyFillAlgorithm
+    FloodFill( x::Int, y::Int, fill_value::T, boundary_value::T)
+
+    draw(img, verts, alg::FloodFill; closed)
+    draw!(img, verts, alg::FloodFill; closed)
+
+Applies flood fill algortithm on image provided by user. Flood fill is an algorithm that determines and alters
+the area connected to a given node in a multi-dimensional array with some matching attribute. In this case, 
+the matching attribute is the color of a region i.e. `current_value` and it's replaced by `fill_value`.
+
+It's like the paint program utility in which when we want to change color of a particular region with color 
+`current_value` to a different selected color `fill_value`.
+
+# Output
+
+Return the flood filled image inside the region. 
+
+# Arguments
+
+## `x` && `y`
+
+Flood fill is a seeded polygon filling algorithm. 
+So we need to provide the seed point (x,y) inside the image from where the algorithm can start its function.
+
+## `fill_value`
+
+The pixels inside the region with color `current_value` will be changed using this parameter. This parameter is
+used also when vertices of polygon are connected using `current_value = true`.
+
+## `current_value`
+
+The original color of a particular region that is to be changed. `current_value` is replaced by `fill_value`.
+
+# `closed`
+
+`closed` keyword specifies whether to connect the polygon edges using the verts provided. 
+Edges will be filled and connected using `fill_value`.
+
+# `Example`
+
+```julia
+using ImageDraw
+
+verts = [CartesianIndex(3, 3), CartesianIndex(3, 8), CartesianIndex(8, 8), CartesianIndex(8, 3), CartesianIndex(3,3)]
+
+img = rand(RGB, 10, 10)
+img[:,:] .= RGB(0.5)
+
+img[3:8, 3] .= RGB(1.0)
+img[3:8, 8] .= RGB(1.0)
+img[3, 3:8] .= RGB(1.0)
+img[8, 3:8] .= RGB(1.0)
+
+draw!(img, verts, FloodFill(3, 3; fill_value = RGB(0.0), current_value = img[3, 3]); closed = false)
+```
+"""
+struct FloodFill{T<:Colorant} <: AbstractPolyFillAlgorithm
+    x::Int
+    y::Int
+    fill_value::T
+    current_value::T
+    function FloodFill(x::Int, y::Int, fill_value::T, current_value::T) where {T <: Colorant}
+        new{T}(x, y, fill_value, current_value)
+    end
+
+end
+
+FloodFill(x::Int = 1, y::Int = 1; fill_value::Colorant = RGB(1.0), current_value::Colorant = fill_value) = FloodFill(x, y, fill_value, current_value)
+FloodFill(p::CartesianIndex{2}; fill_value::Colorant = RGB(1.0), current_value::Colorant = fill_value) = FloodFill(p[1], p[2], fill_value, current_value)
+FloodFill(p::Point; fill_value::Colorant = RGB(1.0), current_value::Colorant = fill_value) = FloodFill(p.y, p.x, fill_value, current_value)
+
+
+"""
     rectangle = RectanglePoints(p1, p2)
     rectangle = RectanglePoints(x1, y1, x2, y2)
 
@@ -326,7 +399,7 @@ Draws the `drawable` object on a copy of image `img` using color
 `color`. Can also draw multiple `Drawable` objects when passed
 as a `AbstractVector{Drawable}` with corresponding colors in `[color]`
 """
-draw(img::AbstractArray{T,2}, args...) where {T<:Colorant} = draw!(copy(img), args...)
+draw(img::AbstractArray{T}, args...; kwargs...) where {T<:Colorant} = draw!(copy(img), args...; kwargs...)
 
 Point(τ::Tuple{Int, Int}) = Point(τ...)
 Point(p::CartesianIndex) = Point(p[2], p[1])

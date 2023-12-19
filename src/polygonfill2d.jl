@@ -4,11 +4,11 @@
 
 """
 function (f::BoundaryFill)(
-    res::AbstractArray{T,2},
-    verts::Vector{CartesianIndex{2}},
+    res::AbstractArray{T, 2},
+    verts::Vector{CartesianIndex{N}},
     x::Int,
     y::Int,
-    ) where {T<:Colorant}
+    ) where {T <: Colorant, N}
     if checkbounds(Bool, res, y, x)
         if (res[y, x] != f.boundary_value && res[y, x] != f.fill_value)
             res[y, x] = f.fill_value
@@ -18,6 +18,26 @@ function (f::BoundaryFill)(
             f(res, verts, x, y - 1)
         end
     end
+    res
+end
+
+"""
+    (f::FloodFill)(res::AbstractArray{T,2}, verts::Vector{CartesianIndex{2}}, x::Int, y::Int, fill_value::T, boundary_value::T) where {T <: Colorant}
+
+"""
+
+function (f::FloodFill)(
+    res::AbstractArray{T, 2},
+    verts::Vector{CartesianIndex{N}},
+    x::Int,
+    y::Int,
+    ) where {T<:Colorant, N}
+    if (res[y, x] != f.current_value || res[y, x] == f.fill_value) return res end
+    if checkbounds(Bool, res, y, x) res[y, x] = f.fill_value end
+    f(res, verts, x + 1, y)
+    f(res, verts, x - 1, y)
+    f(res, verts, x, y + 1)
+    f(res, verts, x, y - 1)
     res
 end
 
